@@ -3,7 +3,7 @@
   <entry>
     <title>服务器SSH被字典爆破时记录密码</title>
     <url>/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="../tree/base/image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
+    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
 <p>在网上找到了两种方法：一种是通过patch，也就是打补丁的方式。因为默认的ssh日志是不带密码记录功能的，于是可以重新编译openssh并打上补丁，使它能够记录，但尝试之后这种方法并没有成功，因为在打补丁的过程中报如下错误：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">patch --dry-run &lt; syslog.patch</span><br><span class="line">checking file auth-passwd.c </span><br><span class="line">patch: **** malformed patch at line 4: &#123;</span><br></pre></td></tr></table></figure>
 <p>我对这方面不是很了解，也没有找到解决方法，遂放弃。</p>
