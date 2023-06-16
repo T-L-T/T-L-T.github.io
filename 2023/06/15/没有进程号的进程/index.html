@@ -125,7 +125,7 @@ var _hmt = _hmt || [];
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1k</span>
+            <span class="post-count">992</span>
         </span>
     </span>
 
@@ -149,23 +149,23 @@ var _hmt = _hmt || [];
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
+  <h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，一下子<a id="more"></a>有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
 <p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
-<p>![](/Users/komorebi/Data/hexo-blog/source/image/2023/06/Pasted Graphic.png)</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png" alt=""></p>
 <p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
-<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG376.jpeg" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psef.jpeg" alt=""></p>
 <p>很明显，也没有什么发现，于是他觉得这可能是某个僵尸进程所有。由于linux系统中，如果一个进程成为僵尸进程之后，用ps命令查看时，该进程的状态栏会被标记为<strong>defunct</strong>，于是他试图用ps命令查找服务器上的僵尸进程：</p>
-<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG375.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psaux.png" alt=""></p>
 <p>但是很遗憾，还是没有什么发现，甚至通过*<em>lsof -i:port *</em>命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
-<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG377.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/telnet.png" alt=""></p>
 <p>端口是通的，说明有后台是有一个正常进程在处理它，所以小L开始慌张了，他下一步想确认到底是不是某些不知名人物所为。如果是不知名人物所为，那大概了会有网络连接的，所以小L用了ss命令：</p>
-<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG378.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/ss.png" alt=""></p>
 <p>还好，通过20090端口只有一个处于ESTAB状态的连接，这是他自己telnet的结果，他稍稍心安。但是这个进程到底是谁建立的呢？小L同学走投无路之下，只好尝试笨办法–直接全局搜索端口号：</p>
-<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG379.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/grep.png" alt=""></p>
 <p>还真让他找出来了一些东西，但是很遗憾，这并不是他要的结果，只是服务器上部署的普罗米修斯程序的日志里面有数据刚好匹配上了20090这个字符串。小L同学继续在网络的海洋里游啊游，还真让他找到了一些东西。</p>
 <p><strong>rpcinfo</strong>工具可以显示所有使用<strong>portmap</strong>注册的程序的信息。rpcinfo -p x.x.x.x 可以基于rpc协议访问服务器，通过服务器返回的响应信息探测主机x.x.x.x上已经注册的rpc服务的信息。</p>
 <p><strong>portmap</strong> 是一个rpc端口映射程序，最初由 Sun 公司开发，它可以将 rpc 程序号映射到网络上的端口号。rpc进程在启动时通知 portmap，显示它们正在监视的端口号以及它们提供服务的 rpc 程序号，然后客户端系统使用特定的 rpc 程序编号联系服务器上的端口映射服务（portmap），然后 portmap 再将客户端重定向到正确的端口号以与其预期的服务进行通信。</p>
-<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG380.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/rpcinfo.png" alt=""></p>
 <p>可以看到，让小L同学备受困扰的20090端口赫然在列！但是这个<strong>nlockmgr</strong>服务是个什么呢？</p>
 <p>nlockmgr是在NFS中用来管理文件的锁定的，防止多个客户端同时写入某个文件是产生冲突。</p>
 <p>NFS服务需要开启 mountd,nfs,nlockmgr,portmapper,rquotad这5个服务，其中nfs、portmapper的端口是固定的，另外三个服务的端口是随机分配的，也可以给mountd,nlockmgr,rquotad设置固定的端口。具体方法很简单，也不再赘述，问问神奇的搜索引擎吧。</p>
