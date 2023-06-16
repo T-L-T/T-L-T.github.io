@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-cn">
+
+
+<head>
+  <meta charset="utf-8" />
+<meta name="google-site-verification" content="yZXZYXkzUutjRQvvZh503W3gLIY6tGXr2Nvdhr-UCY4" />
+<meta name="baidu-site-verification" content="0jrORXjq2o" />
+   
+  <meta name="keywords" content="杂谈,读后感,linux,算法，运维" />
+   
+  <meta name="description" content="个人学习总结、杂谈" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+     Komorebi
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-173449017-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+
+
+
+  
+<script>
+var _hmt = _hmt || [];
+(function() {
+	var hm = document.createElement("script");
+	hm.src = "https://hm.baidu.com/hm.js?40120abefedb0411547f63f50032ceb1";
+	var s = document.getElementsByTagName("script")[0]; 
+	s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-173449017-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-173449017-1');
+</script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?40120abefedb0411547f63f50032ceb1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<link rel="alternate" href="/atom.xml" title="Komorebi" type="application/atom+xml">
+</head>
+
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      
+<section class="cover">
+    
+      
+      <a class="forkMe" href="https://github.com/T-L-T"
+        target="_blank"><img width="149" height="149" src="/images/forkme.png"
+          class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+    
+  <div class="cover-frame">
+    <div class="bg-box">
+      <img src="/images/cover4.jpg" alt="image frame" />
+    </div>
+    <div class="cover-inner text-center text-white">
+      <h1><a href="/">Komorebi</a></h1>
+      <div id="subtitle-box">
+        
+        <span id="subtitle"></span>
+        
+      </div>
+      <div>
+        
+      </div>
+    </div>
+  </div>
+  <div class="cover-learn-more">
+    <a href="javascript:void(0)" class="anchor"><i class="ri-arrow-down-line"></i></a>
+  </div>
+</section>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
+
+
+<!-- Subtitle -->
+
+  <script>
+    try {
+      var typed = new Typed("#subtitle", {
+        strings: ['慢慢来', '会更快', ''],
+        startDelay: 0,
+        typeSpeed: 200,
+        loop: true,
+        backSpeed: 100,
+        showCursor: true
+      });
+    } catch (err) {
+      console.log(err)
+    }
+  </script>
+  
+<div id="main">
+  <section class="outer">
+  <article class="articles">
+    
+    
+    
+    
+    <article
+  id="post-没有进程号的进程"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/"
+    >没有进程号的进程</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/" class="article-date">
+  <time datetime="2023-06-15T08:09:51.000Z" itemprop="datePublished">2023-06-15</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/">运维经验</a> / <a class="article-category-link" href="/categories/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/linux%E5%91%BD%E4%BB%A4/">linux命令</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">3 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
+<p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
+<p>![](/Users/komorebi/Data/hexo-blog/source/image/2023/06/Pasted Graphic.png)</p>
+<p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
+<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG376.jpeg" alt=""></p>
+<p>很明显，也没有什么发现，于是他觉得这可能是某个僵尸进程所有。由于linux系统中，如果一个进程成为僵尸进程之后，用ps命令查看时，该进程的状态栏会被标记为<strong>defunct</strong>，于是他试图用ps命令查找服务器上的僵尸进程：</p>
+<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG375.png" alt=""></p>
+<p>但是很遗憾，还是没有什么发现，甚至通过*<em>lsof -i:port *</em>命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
+<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG377.png" alt=""></p>
+<p>端口是通的，说明有后台是有一个正常进程在处理它，所以小L开始慌张了，他下一步想确认到底是不是某些不知名人物所为。如果是不知名人物所为，那大概了会有网络连接的，所以小L用了ss命令：</p>
+<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG378.png" alt=""></p>
+<p>还好，通过20090端口只有一个处于ESTAB状态的连接，这是他自己telnet的结果，他稍稍心安。但是这个进程到底是谁建立的呢？小L同学走投无路之下，只好尝试笨办法–直接全局搜索端口号：</p>
+<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG379.png" alt=""></p>
+<p>还真让他找出来了一些东西，但是很遗憾，这并不是他要的结果，只是服务器上部署的普罗米修斯程序的日志里面有数据刚好匹配上了20090这个字符串。小L同学继续在网络的海洋里游啊游，还真让他找到了一些东西。</p>
+<p><strong>rpcinfo</strong>工具可以显示所有使用<strong>portmap</strong>注册的程序的信息。rpcinfo -p x.x.x.x 可以基于rpc协议访问服务器，通过服务器返回的响应信息探测主机x.x.x.x上已经注册的rpc服务的信息。</p>
+<p><strong>portmap</strong> 是一个rpc端口映射程序，最初由 Sun 公司开发，它可以将 rpc 程序号映射到网络上的端口号。rpc进程在启动时通知 portmap，显示它们正在监视的端口号以及它们提供服务的 rpc 程序号，然后客户端系统使用特定的 rpc 程序编号联系服务器上的端口映射服务（portmap），然后 portmap 再将客户端重定向到正确的端口号以与其预期的服务进行通信。</p>
+<p><img src="/Users/komorebi/Data/hexo-blog/source/image/2023/06/WechatIMG380.png" alt=""></p>
+<p>可以看到，让小L同学备受困扰的20090端口赫然在列！但是这个<strong>nlockmgr</strong>服务是个什么呢？</p>
+<p>nlockmgr是在NFS中用来管理文件的锁定的，防止多个客户端同时写入某个文件是产生冲突。</p>
+<p>NFS服务需要开启 mountd,nfs,nlockmgr,portmapper,rquotad这5个服务，其中nfs、portmapper的端口是固定的，另外三个服务的端口是随机分配的，也可以给mountd,nlockmgr,rquotad设置固定的端口。具体方法很简单，也不再赘述，问问神奇的搜索引擎吧。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux%E5%91%BD%E4%BB%A4/" rel="tag">linux命令</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/" rel="tag">运维经验</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+   
+</article>
+
+    
+    <article
+  id="post-jmeter基本使用"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"
+    >Jmeter基本使用与常见性能瓶颈</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2022-10-23T09:36:00.000Z" itemprop="datePublished">2022-10-23</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/">运维工具</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">11 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="Jmeter基本使用与常见性能瓶颈"><a href="#Jmeter基本使用与常见性能瓶颈" class="headerlink" title="Jmeter基本使用与常见性能瓶颈"></a>Jmeter基本使用与常见性能瓶颈</h2><h3 id="一、什么是Jmeter"><a href="#一、什么是Jmeter" class="headerlink" title="一、什么是Jmeter"></a>一、什么是Jmeter</h3><p><a href="https://jmeter.apache.org/" target="_blank" rel="noopener">官网链接</a></p>
+<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/小服务程序/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载， 
+      <a class="article-more-link" href="/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jmeter/" rel="tag">jmeter</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/" rel="tag">压力测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/" rel="tag">运维工具</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+   
+</article>
+
+    
+    <article
+  id="post-程序中的数据类型转换"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"
+    >程序中的数据类型转换</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" class="article-date">
+  <time datetime="2022-10-17T00:33:43.000Z" itemprop="datePublished">2022-10-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/C-%E5%9F%BA%E7%A1%80/">C++基础</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">800</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">2 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="基本内置类型"><a href="#基本内置类型" class="headerlink" title="基本内置类型"></a>基本内置类型</h3><ul>
+<li>short</li>
+<li>int</li>
+<li>long</li>
+<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
+<li>float</li>
+<li>double</li>
+<li>long double</li>
+<li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
+<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
+<li>bool</li>
+</ul>
+<h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
+<li>明确知晓数值不可能为负数时，选用无符号类型 
+      <a class="article-more-link" href="/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-%E5%9F%BA%E7%A1%80/" rel="tag">C++基础</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+   
+</article>
+
+    
+    <article
+  id="post-main函数返回值问题"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/"
+    >C++基础-main函数返回值问题</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2022-04-19T14:36:00.000Z" itemprop="datePublished">2022-04-19</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/C-%E5%9F%BA%E7%A1%80/">C++基础</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">617</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">2 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证： 
+      <a class="article-more-link" href="/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-%E5%9F%BA%E7%A1%80/" rel="tag">C++基础</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E5%AD%97%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95/" rel="tag">数字的表示方法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" rel="tag">计算机基础</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+   
+</article>
+
+    
+    <article
+  id="post-服务器SSH被字典爆破时记录密码"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/"
+    >服务器SSH被字典爆破时记录密码</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/" class="article-date">
+  <time datetime="2020-11-10T11:29:44.000Z" itemprop="datePublished">2020-11-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%89%E5%85%A8/">服务器安全</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.9k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">7 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿…… 
+      <a class="article-more-link" href="/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSH/" rel="tag">SSH</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4/" rel="tag">字典爆破</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%89%E5%85%A8/" rel="tag">服务器安全</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+   
+</article>
+
+    
+    <article
+  id="post-About"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/07/24/About/"
+    >About</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/07/24/About/" class="article-date">
+  <time datetime="2020-07-24T15:04:32.000Z" itemprop="datePublished">2020-07-24</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/about/">about</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">303</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">1 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="About"><a href="#About" class="headerlink" title="About"></a>About</h2><p>  ——初来乍到，请多关照（^_^）—–</p>
+<p>21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。 
+      <a class="article-more-link" href="/2020/07/24/About/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/about/" rel="tag">about</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+   
+</article>
+
+    
+  </article>
+  
+
+  
+</section>
+</div>
+
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2023
+        <i class="ri-heart-fill heart_icon"></i> Komorebi
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="Komorebi"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://github.com/T-L-T" target="_blank" rel="noopener">Github</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://me.csdn.net/weixin_43615204" target="_blank" rel="noopener">我的CSDN</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2020/07/24/About/index.html">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>
