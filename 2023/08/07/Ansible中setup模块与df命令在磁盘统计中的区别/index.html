@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+
+
+<html lang="zh-cn">
+
+
+<head>
+  <meta charset="utf-8" />
+<meta name="google-site-verification" content="yZXZYXkzUutjRQvvZh503W3gLIY6tGXr2Nvdhr-UCY4" />
+<meta name="baidu-site-verification" content="0jrORXjq2o" />
+   
+  <meta name="keywords" content="杂谈,读后感,linux,算法，运维" />
+   
+  <meta name="description" content="个人学习总结、杂谈" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Ansible中setup模块与df命令在磁盘统计中的区别 |  Komorebi
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-173449017-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+
+
+
+  
+<script>
+var _hmt = _hmt || [];
+(function() {
+	var hm = document.createElement("script");
+	hm.src = "https://hm.baidu.com/hm.js?40120abefedb0411547f63f50032ceb1";
+	var s = document.getElementsByTagName("script")[0]; 
+	s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-173449017-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-173449017-1');
+</script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?40120abefedb0411547f63f50032ceb1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<link rel="alternate" href="/atom.xml" title="Komorebi" type="application/atom+xml">
+</head>
+
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Ansible中setup模块与df命令在磁盘统计中的区别"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Ansible中setup模块与df命令在磁盘统计中的区别
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/" class="article-date">
+  <time datetime="2023-08-07T01:48:35.000Z" itemprop="datePublished">2023-08-07</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Ansible/">Ansible</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.5k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">6 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，<a id="more"></a>该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
+<h3 id="二、df-命令底层原理"><a href="#二、df-命令底层原理" class="headerlink" title="二、df 命令底层原理"></a>二、df 命令底层原理</h3><p>df命令的底层调用过程依次如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev() -&gt; get_fs_usage() -&gt; statvfs_works() -&gt; statvfs()&#x2F;statfs()</span><br></pre></td></tr></table></figure>
+
+<p>其中，main() -&gt; get_entry()/get_all_entries() -&gt; get_point() -&gt; get_dev()这些函数都是在coreutils工程的df.c文件，地址： git://git.savannah.gnu.org/coreutils.git，路径：coreutils/src/df.c</p>
+<p>get_fs_usage() -&gt; statvfs_works() 是在 gnulib工程的fsusage.c文件，地址：<a href="https://github.com/coreutils/gnulib.git" target="_blank" rel="noopener">https://github.com/coreutils/gnulib.git</a> ， 路径：gnulib-master/lib/fsusage.c </p>
+<p>get_entry()如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Determine what kind of node NAME is and show the device usage</span></span><br><span class="line"><span class="comment">   for it.  STATP is the results of 'stat' on NAME.  */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">get_entry (<span class="keyword">char</span> <span class="keyword">const</span> *name, struct stat <span class="keyword">const</span> *statp)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ((S_ISBLK (statp-&gt;st_mode) || S_ISCHR (statp-&gt;st_mode))</span><br><span class="line">      &amp;&amp; get_device (name))</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  get_point (name, statp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用于获取并显示特定文件系统的磁盘空间使用信息。该函数会解析文件系统的挂载点路径，并收集有关该文件系统的磁盘空间信息，例如总大小、已用空间、可用空间等。</p>
+<p>可以看到get_entry()函数调用get_point()函数，get_point()函数如下(已省略前面判断真实挂载点的代码，有需要可以自行查看)：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">     <span class="comment">/* Find the actual mount point.  */</span></span><br><span class="line">      <span class="keyword">char</span> *mp = find_mount_point (<span class="built_in">point</span>, statp);</span><br><span class="line">      <span class="keyword">if</span> (mp)</span><br><span class="line">        &#123;</span><br><span class="line">          get_dev (<span class="literal">nullptr</span>, mp, <span class="built_in">point</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>,</span><br><span class="line">                   <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">nullptr</span>, <span class="literal">false</span>);</span><br><span class="line">          <span class="built_in">free</span> (mp);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>用于找出文件或目录挂载在哪个设备上，并显示该设备的使用情况。它首先根据给定的路径<code>point</code>计算实际的绝对路径，并使用该绝对路径在挂载点列表<code>mount_list</code>中查找匹配的挂载点。找到挂载点后，函数会调用<code>get_dev</code>函数，获取该设备的详细信息。</p>
+<p>get_dev()函数如下（已省略前面判断过滤不符合要求的文件系统的过程）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">/* If MOUNT_POINT is null, then the file system is not mounted, and this</span></span><br><span class="line"><span class="comment">     program reports on the file system that the special file is on.</span></span><br><span class="line"><span class="comment">     It would be better to report on the unmounted file system,</span></span><br><span class="line"><span class="comment">     but statfs doesn't do that on most systems.  */</span></span><br><span class="line">  <span class="keyword">if</span> (!stat_file)</span><br><span class="line">    stat_file = mount_point ? mount_point : device;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">fs_usage</span> <span class="title">fsu</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (force_fsu)</span><br><span class="line">    fsu = *force_fsu;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (get_fs_usage (stat_file, device, &amp;fsu))</span><br><span class="line">  &#123;</span><br><span class="line">  ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数通过一系列条件判断来过滤不符合要求的文件系统信息，只处理符合条件的文件系统,最后通过调用<code>get_fs_usage</code>函数获取文件系统的使用情况，该函数还会计算文件系统的使用百分比。</p>
+<p>get_uasge()函数会通过调用statvfs_works()函数判断当前版本的linux内核是否支持statvfs()方。如果支持则会调用statvfs()方法获取磁盘的真实使用情况，如果不支持则会调用statfs()方法。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">statvfs_works (<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">int</span> statvfs_works_cache = <span class="number">-1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">utsname</span> <span class="title">name</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (statvfs_works_cache &lt; <span class="number">0</span>)</span><br><span class="line">    statvfs_works_cache = (uname (&amp;name) == <span class="number">0</span></span><br><span class="line">                           &amp;&amp; <span class="number">0</span> &lt;= strverscmp (name.<span class="built_in">release</span>, <span class="string">"2.6.36"</span>));</span><br><span class="line">  <span class="keyword">return</span> statvfs_works_cache;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>statvfs_works()函数通过获取当前内核的版本判断是否支持statvfs()方法，内核版本大于2.6.36则判断支持。</p>
+<h3 id="三、Ansible的setup模块原理"><a href="#三、Ansible的setup模块原理" class="headerlink" title="三、Ansible的setup模块原理"></a>三、Ansible的setup模块原理</h3><p>ansible内核源码地址：<a href="https://github.com/ansible/ansible.git" target="_blank" rel="noopener">https://github.com/ansible/ansible.git</a></p>
+<p>路径：ansible/lib/ansible/module_utils/facts/utils.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_mount_size</span><span class="params">(mountpoint)</span>:</span></span><br><span class="line">    mount_size = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        statvfs_result = os.statvfs(mountpoint)</span><br><span class="line">        mount_size[<span class="string">'size_total'</span>] = statvfs_result.f_frsize * statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'size_available'</span>] = statvfs_result.f_frsize * (statvfs_result.f_bavail)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Block total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'block_size'</span>] = statvfs_result.f_bsize</span><br><span class="line">        mount_size[<span class="string">'block_total'</span>] = statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'block_available'</span>] = statvfs_result.f_bavail</span><br><span class="line">        mount_size[<span class="string">'block_used'</span>] = mount_size[<span class="string">'block_total'</span>] - mount_size[<span class="string">'block_available'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Inode total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'inode_total'</span>] = statvfs_result.f_files</span><br><span class="line">        mount_size[<span class="string">'inode_available'</span>] = statvfs_result.f_favail</span><br><span class="line">        mount_size[<span class="string">'inode_used'</span>] = mount_size[<span class="string">'inode_total'</span>] - mount_size[<span class="string">'inode_available'</span>]</span><br><span class="line">    <span class="keyword">except</span> OSError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mount_size</span><br></pre></td></tr></table></figure>
+
+<p>上述为获取磁盘使用情况的代码，可以看到使用了os.ststvfs()库函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">os.statvfs(path):</span><br><span class="line"></span><br><span class="line">Perform a statvfs() system call on the given path. The return value is an object whose attributes describe the filesystem on the given path, and correspond to the members of the statvfs structure, namely: f_bsize, f_frsize, f_blocks, f_bfree, f_bavail, f_files, f_ffree, f_favail, f_flag, f_namemax.</span><br><span class="line">返回内容说明如下：</span><br><span class="line">f_bsize: 文件系统块大小</span><br><span class="line">f_frsize: 分栈大小</span><br><span class="line">f_blocks: 文件系统数据块总数</span><br><span class="line">f_bfree: 可用块数</span><br><span class="line">f_bavail:非超级用户可获取的块数</span><br><span class="line">f_files: 文件结点总数</span><br><span class="line">f_ffree: 可用文件结点数</span><br><span class="line">f_favail: 非超级用户的可用文件结点数</span><br><span class="line">f_fsid: 文件系统标识 ID</span><br><span class="line">f_flag: 挂载标记</span><br><span class="line">f_namemax: 最大文件长度</span><br></pre></td></tr></table></figure>
+
+<p>可以看到setup模块最终调用的是statvfs()系统函数，并且可用磁盘大小、磁盘总大小等都是通过计算得来。</p>
+<h3 id="四、statfs-与statvfs"><a href="#四、statfs-与statvfs" class="headerlink" title="四、statfs()与statvfs()"></a>四、statfs()与statvfs()</h3><p>借用<a href="https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：" target="_blank" rel="noopener">https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Q：Why do the statfs() and statvfs() calls both exist when they&#39;re so similar?Under what circumstances would I prefer one over the other?</span><br><span class="line"></span><br><span class="line">A：</span><br><span class="line">Originally 4.4BSD defined a statfs() call. Linux later implemented a slightly different call with the same name. Posix standardized it between all freenix and Unix versions by defining statvfs().</span><br><span class="line"></span><br><span class="line">statfs() is OS-specific</span><br><span class="line"></span><br><span class="line">statvfs() is posix-conforming</span><br><span class="line"></span><br><span class="line">As they all return slightly different structures, later ones to come along can&#39;t replace the first.</span><br><span class="line"></span><br><span class="line">In general you should use statvfs(), the Posix one. Be careful about &quot;use Posix&quot; advice, though, as in some cases (pty, for example) the BSD (or whatever) one is more portable in practice.</span><br></pre></td></tr></table></figure>
+
+<p>也即是说这两个函数作用相同，之所以有两个是由于历史与标准原因。最开始的4.4BSD定义的是ststfs()函数，Linux内核后来实现了一个略微有所不同，但是名字也叫这个的函数，这两个statfs()函数返回的内容的数据结构有所不同。后来Posix想要实现freenix与Unix的标准化，于是定义了ststvfs()函数。简单来说就是statfs()函数是针对系统来说的，Unix有一个，Linux也有一个；而statvfs()函数则是符合Posix规范的。</p>
+<h3 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h3><p>回到开头的问题，Ansible的setup模块与linux中的df工具，区别在于前者直接调用statvfs()系统函数，后者可能调用statfs()函数（linux内核版本低于2.6.36），也可能调用statvfs()函数（linux内核版本高于2.6.36）。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://t-l-t.github.io/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ansible/" rel="tag">Ansible</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Devops/" rel="tag">Devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">没有进程号的进程</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2023
+        <i class="ri-heart-fill heart_icon"></i> Komorebi
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="Komorebi"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://github.com/T-L-T" target="_blank" rel="noopener">Github</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://me.csdn.net/weixin_43615204" target="_blank" rel="noopener">我的CSDN</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2020/07/24/About/index.html">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

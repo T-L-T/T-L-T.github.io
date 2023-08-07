@@ -1,37 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>没有进程号的进程</title>
-    <url>/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</url>
-    <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，<a id="more"></a>一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
-<p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png" alt=""></p>
-<p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psef.jpeg" alt=""></p>
-<p>很明显，也没有什么发现，于是他觉得这可能是某个僵尸进程所有。由于linux系统中，如果一个进程成为僵尸进程之后，用ps命令查看时，该进程的状态栏会被标记为<strong>defunct</strong>，于是他试图用ps命令查找服务器上的僵尸进程：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psaux.png" alt=""></p>
-<p>但是很遗憾，还是没有什么发现，甚至通过*<em>lsof -i:port *</em>命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/telnet.png" alt=""></p>
-<p>端口是通的，说明有后台是有一个正常进程在处理它，所以小L开始慌张了，他下一步想确认到底是不是某些不知名人物所为。如果是不知名人物所为，那大概了会有网络连接的，所以小L用了ss命令：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/ss.png" alt=""></p>
-<p>还好，通过20090端口只有一个处于ESTAB状态的连接，这是他自己telnet的结果，他稍稍心安。但是这个进程到底是谁建立的呢？小L同学走投无路之下，只好尝试笨办法–直接全局搜索端口号：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/grep.png" alt=""></p>
-<p>还真让他找出来了一些东西，但是很遗憾，这并不是他要的结果，只是服务器上部署的普罗米修斯程序的日志里面有数据刚好匹配上了20090这个字符串。小L同学继续在网络的海洋里游啊游，还真让他找到了一些东西。</p>
-<p><strong>rpcinfo</strong>工具可以显示所有使用<strong>portmap</strong>注册的程序的信息。rpcinfo -p x.x.x.x 可以基于rpc协议访问服务器，通过服务器返回的响应信息探测主机x.x.x.x上已经注册的rpc服务的信息。</p>
-<p><strong>portmap</strong> 是一个rpc端口映射程序，最初由 Sun 公司开发，它可以将 rpc 程序号映射到网络上的端口号。rpc进程在启动时通知 portmap，显示它们正在监视的端口号以及它们提供服务的 rpc 程序号，然后客户端系统使用特定的 rpc 程序编号联系服务器上的端口映射服务（portmap），然后 portmap 再将客户端重定向到正确的端口号以与其预期的服务进行通信。</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/rpcinfo.png" alt=""></p>
-<p>可以看到，让小L同学备受困扰的20090端口赫然在列！但是这个<strong>nlockmgr</strong>服务是个什么呢？</p>
-<p>nlockmgr是在NFS中用来管理文件的锁定的，防止多个客户端同时写入某个文件是产生冲突。</p>
-<p>NFS服务需要开启 mountd,nfs,nlockmgr,portmapper,rquotad这5个服务，其中nfs、portmapper的端口是固定的，另外三个服务的端口是随机分配的，也可以给mountd,nlockmgr,rquotad设置固定的端口。具体方法很简单，也不再赘述，问问神奇的搜索引擎吧。</p>
+    <title>About</title>
+    <url>/2020/07/24/About/</url>
+    <content><![CDATA[<h2 id="About"><a href="#About" class="headerlink" title="About"></a>About</h2><p>  ——初来乍到，请多关照（^_^）—–</p>
+<p>21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。<a id="more"></a>备考期间不定时更新（其实是不想复习了就更新hahahhahaha），内容随缘。可能是技术类文章，也可能是读后感、感悟之类的。备考期间会着重复习数据结构、算法、C++，刷力扣之类的，所以未来一段时间可能算法类多一点。另外，会抽空看一点系统介绍Linux的电子书（虽然Linux是我目前的主系统，但不得不说，我对它缺乏系统性的了解，很难深入….）。考试之后有想法入坑CTF（其实是想入坑很久了，苦于….），到时候也会更新自己的学习感悟。</p>
+<p>如果有大神发现我的博客有误，可以通过以下方式联系我改正，万分感激：</p>
+<ul>
+<li>email:<a href="mailto:komorebilzh@gmail.com">komorebilzh@gmail.com</a></li>
+<li>QQ:3360207672</li>
+<li>twitter:<a href="https://twitter.com/messages" target="_blank" rel="noopener">→_→</a></li>
+</ul>
+<p>———-THE END———</p>
 ]]></content>
       <categories>
-        <category>运维经验</category>
-        <category>linux命令</category>
+        <category>about</category>
       </categories>
       <tags>
-        <tag>运维经验</tag>
+        <tag>about</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ansible中setup模块与df命令在磁盘统计中的区别</title>
+    <url>/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，<a id="more"></a>该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
+<h3 id="二、df-命令底层原理"><a href="#二、df-命令底层原理" class="headerlink" title="二、df 命令底层原理"></a>二、df 命令底层原理</h3><p>df命令的底层调用过程依次如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev() -&gt; get_fs_usage() -&gt; statvfs_works() -&gt; statvfs()&#x2F;statfs()</span><br></pre></td></tr></table></figure>
+
+<p>其中，main() -&gt; get_entry()/get_all_entries() -&gt; get_point() -&gt; get_dev()这些函数都是在coreutils工程的df.c文件，地址： git://git.savannah.gnu.org/coreutils.git，路径：coreutils/src/df.c</p>
+<p>get_fs_usage() -&gt; statvfs_works() 是在 gnulib工程的fsusage.c文件，地址：<a href="https://github.com/coreutils/gnulib.git" target="_blank" rel="noopener">https://github.com/coreutils/gnulib.git</a> ， 路径：gnulib-master/lib/fsusage.c </p>
+<p>get_entry()如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Determine what kind of node NAME is and show the device usage</span></span><br><span class="line"><span class="comment">   for it.  STATP is the results of 'stat' on NAME.  */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">get_entry (<span class="keyword">char</span> <span class="keyword">const</span> *name, struct stat <span class="keyword">const</span> *statp)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ((S_ISBLK (statp-&gt;st_mode) || S_ISCHR (statp-&gt;st_mode))</span><br><span class="line">      &amp;&amp; get_device (name))</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  get_point (name, statp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用于获取并显示特定文件系统的磁盘空间使用信息。该函数会解析文件系统的挂载点路径，并收集有关该文件系统的磁盘空间信息，例如总大小、已用空间、可用空间等。</p>
+<p>可以看到get_entry()函数调用get_point()函数，get_point()函数如下(已省略前面判断真实挂载点的代码，有需要可以自行查看)：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">     <span class="comment">/* Find the actual mount point.  */</span></span><br><span class="line">      <span class="keyword">char</span> *mp = find_mount_point (<span class="built_in">point</span>, statp);</span><br><span class="line">      <span class="keyword">if</span> (mp)</span><br><span class="line">        &#123;</span><br><span class="line">          get_dev (<span class="literal">nullptr</span>, mp, <span class="built_in">point</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>,</span><br><span class="line">                   <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">nullptr</span>, <span class="literal">false</span>);</span><br><span class="line">          <span class="built_in">free</span> (mp);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>用于找出文件或目录挂载在哪个设备上，并显示该设备的使用情况。它首先根据给定的路径<code>point</code>计算实际的绝对路径，并使用该绝对路径在挂载点列表<code>mount_list</code>中查找匹配的挂载点。找到挂载点后，函数会调用<code>get_dev</code>函数，获取该设备的详细信息。</p>
+<p>get_dev()函数如下（已省略前面判断过滤不符合要求的文件系统的过程）：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">/* If MOUNT_POINT is null, then the file system is not mounted, and this</span></span><br><span class="line"><span class="comment">     program reports on the file system that the special file is on.</span></span><br><span class="line"><span class="comment">     It would be better to report on the unmounted file system,</span></span><br><span class="line"><span class="comment">     but statfs doesn't do that on most systems.  */</span></span><br><span class="line">  <span class="keyword">if</span> (!stat_file)</span><br><span class="line">    stat_file = mount_point ? mount_point : device;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">fs_usage</span> <span class="title">fsu</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (force_fsu)</span><br><span class="line">    fsu = *force_fsu;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (get_fs_usage (stat_file, device, &amp;fsu))</span><br><span class="line">  &#123;</span><br><span class="line">  ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数通过一系列条件判断来过滤不符合要求的文件系统信息，只处理符合条件的文件系统,最后通过调用<code>get_fs_usage</code>函数获取文件系统的使用情况，该函数还会计算文件系统的使用百分比。</p>
+<p>get_uasge()函数会通过调用statvfs_works()函数判断当前版本的linux内核是否支持statvfs()方。如果支持则会调用statvfs()方法获取磁盘的真实使用情况，如果不支持则会调用statfs()方法。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">statvfs_works (<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">int</span> statvfs_works_cache = <span class="number">-1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">utsname</span> <span class="title">name</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (statvfs_works_cache &lt; <span class="number">0</span>)</span><br><span class="line">    statvfs_works_cache = (uname (&amp;name) == <span class="number">0</span></span><br><span class="line">                           &amp;&amp; <span class="number">0</span> &lt;= strverscmp (name.<span class="built_in">release</span>, <span class="string">"2.6.36"</span>));</span><br><span class="line">  <span class="keyword">return</span> statvfs_works_cache;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>statvfs_works()函数通过获取当前内核的版本判断是否支持statvfs()方法，内核版本大于2.6.36则判断支持。</p>
+<h3 id="三、Ansible的setup模块原理"><a href="#三、Ansible的setup模块原理" class="headerlink" title="三、Ansible的setup模块原理"></a>三、Ansible的setup模块原理</h3><p>ansible内核源码地址：<a href="https://github.com/ansible/ansible.git" target="_blank" rel="noopener">https://github.com/ansible/ansible.git</a></p>
+<p>路径：ansible/lib/ansible/module_utils/facts/utils.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_mount_size</span><span class="params">(mountpoint)</span>:</span></span><br><span class="line">    mount_size = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        statvfs_result = os.statvfs(mountpoint)</span><br><span class="line">        mount_size[<span class="string">'size_total'</span>] = statvfs_result.f_frsize * statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'size_available'</span>] = statvfs_result.f_frsize * (statvfs_result.f_bavail)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Block total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'block_size'</span>] = statvfs_result.f_bsize</span><br><span class="line">        mount_size[<span class="string">'block_total'</span>] = statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'block_available'</span>] = statvfs_result.f_bavail</span><br><span class="line">        mount_size[<span class="string">'block_used'</span>] = mount_size[<span class="string">'block_total'</span>] - mount_size[<span class="string">'block_available'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Inode total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'inode_total'</span>] = statvfs_result.f_files</span><br><span class="line">        mount_size[<span class="string">'inode_available'</span>] = statvfs_result.f_favail</span><br><span class="line">        mount_size[<span class="string">'inode_used'</span>] = mount_size[<span class="string">'inode_total'</span>] - mount_size[<span class="string">'inode_available'</span>]</span><br><span class="line">    <span class="keyword">except</span> OSError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mount_size</span><br></pre></td></tr></table></figure>
+
+<p>上述为获取磁盘使用情况的代码，可以看到使用了os.ststvfs()库函数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">os.statvfs(path):</span><br><span class="line"></span><br><span class="line">Perform a statvfs() system call on the given path. The return value is an object whose attributes describe the filesystem on the given path, and correspond to the members of the statvfs structure, namely: f_bsize, f_frsize, f_blocks, f_bfree, f_bavail, f_files, f_ffree, f_favail, f_flag, f_namemax.</span><br><span class="line">返回内容说明如下：</span><br><span class="line">f_bsize: 文件系统块大小</span><br><span class="line">f_frsize: 分栈大小</span><br><span class="line">f_blocks: 文件系统数据块总数</span><br><span class="line">f_bfree: 可用块数</span><br><span class="line">f_bavail:非超级用户可获取的块数</span><br><span class="line">f_files: 文件结点总数</span><br><span class="line">f_ffree: 可用文件结点数</span><br><span class="line">f_favail: 非超级用户的可用文件结点数</span><br><span class="line">f_fsid: 文件系统标识 ID</span><br><span class="line">f_flag: 挂载标记</span><br><span class="line">f_namemax: 最大文件长度</span><br></pre></td></tr></table></figure>
+
+<p>可以看到setup模块最终调用的是statvfs()系统函数，并且可用磁盘大小、磁盘总大小等都是通过计算得来。</p>
+<h3 id="四、statfs-与statvfs"><a href="#四、statfs-与statvfs" class="headerlink" title="四、statfs()与statvfs()"></a>四、statfs()与statvfs()</h3><p>借用<a href="https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：" target="_blank" rel="noopener">https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">Q：Why do the statfs() and statvfs() calls both exist when they&#39;re so similar?Under what circumstances would I prefer one over the other?</span><br><span class="line"></span><br><span class="line">A：</span><br><span class="line">Originally 4.4BSD defined a statfs() call. Linux later implemented a slightly different call with the same name. Posix standardized it between all freenix and Unix versions by defining statvfs().</span><br><span class="line"></span><br><span class="line">statfs() is OS-specific</span><br><span class="line"></span><br><span class="line">statvfs() is posix-conforming</span><br><span class="line"></span><br><span class="line">As they all return slightly different structures, later ones to come along can&#39;t replace the first.</span><br><span class="line"></span><br><span class="line">In general you should use statvfs(), the Posix one. Be careful about &quot;use Posix&quot; advice, though, as in some cases (pty, for example) the BSD (or whatever) one is more portable in practice.</span><br></pre></td></tr></table></figure>
+
+<p>也即是说这两个函数作用相同，之所以有两个是由于历史与标准原因。最开始的4.4BSD定义的是ststfs()函数，Linux内核后来实现了一个略微有所不同，但是名字也叫这个的函数，这两个statfs()函数返回的内容的数据结构有所不同。后来Posix想要实现freenix与Unix的标准化，于是定义了ststvfs()函数。简单来说就是statfs()函数是针对系统来说的，Unix有一个，Linux也有一个；而statvfs()函数则是符合Posix规范的。</p>
+<h3 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h3><p>回到开头的问题，Ansible的setup模块与linux中的df工具，区别在于前者直接调用statvfs()系统函数，后者可能调用statfs()函数（linux内核版本低于2.6.36），也可能调用statvfs()函数（linux内核版本高于2.6.36）。</p>
+]]></content>
+      <categories>
+        <category>Ansible</category>
+      </categories>
+      <tags>
+        <tag>Ansible</tag>
         <tag>linux</tag>
-        <tag>linux命令</tag>
+        <tag>Devops</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C++基础-main函数返回值问题</title>
+    <url>/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：<a id="more"></a></p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"sssss"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译运行之后使用 ”echo $?“ 观察系统接收到的返回值，发现为255。还在纳闷这个值从何而来，实在惭愧一时没想起来<strong>计算机采用补码形式存储数据</strong>，特此记录</p>
+<h3 id="计算机基础-数字的表示方法"><a href="#计算机基础-数字的表示方法" class="headerlink" title="计算机基础-数字的表示方法"></a>计算机基础-数字的表示方法</h3><p>计算机中有符号整数有三种表示方法——-原码、反码、补码。</p>
+<ul>
+<li><p>原码：第一位表示符号位，后面为有符号整数绝对值的二进制形式</p>
+</li>
+<li><p>反码：有符号正整数的反码等于原码；负整数的反码为第一位符号位不变，其后每一位变成相反数</p>
+</li>
+<li><p>补码：有符号正整数的补码等于原码；负整数的补码为反码+1</p>
+<p><strong>总结：</strong></p>
+<p><strong>有符号正整数原码=反码=补码</strong></p>
+<p><strong>有符号负整数反码等于原码除符号位不变外，其余每一位取反；补码等于原码除符号位不变外，其余每一位取反再加1</strong></p>
+</li>
+</ul>
+<p>举例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">十进制-----------------二进制原码-------------反码-----------------补码</span><br><span class="line">  9                   0000 1001          0000 1001           0000 1001</span><br><span class="line"> -9                   1000 1001          1111 0110           1111 0111</span><br><span class="line"> 127                  0111 1111          0111 1111           0111 1111</span><br><span class="line">-127                  1111 1111          1000 0000           1000 0001</span><br><span class="line"> 128                  1000 0000          1000 0000           1000 0000</span><br><span class="line">-128             0001 1000 0000     0001 0111 1111      0001 1000 0000</span><br></pre></td></tr></table></figure>
+
+<h3 id="C-基础-main函数返回值问题-1"><a href="#C-基础-main函数返回值问题-1" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h3><p>回到main函数的返回值问题，为何显示255？</p>
+<p>因为<strong>系统用8bits的无符号数标识退出状态，所以退出的状态值为0至255</strong>，而有符号整型 -1 的补码形式为 1111 1111 对应无符号整型为 255</p>
+<p>那么问题来了，既然系统的退出状态值为8bits的无符号数，取值范围就是0-255，如果我在函数里面返回了超255的数又会怎样呢？很简单，返回的值会被<strong>截断</strong></p>
+<p>比如：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果main函数最终return 257;</span><br><span class="line">257：</span><br><span class="line">二进制原码&#x3D;反码&#x3D;补码：0000 0001 0000 0001</span><br></pre></td></tr></table></figure>
+
+<p>那么，系统会截取最低8bits，即 0000 0001 ,最终编译运行之后再”echo $?“ 得到的值就是 1</p>
+]]></content>
+      <categories>
+        <category>C++基础</category>
+      </categories>
+      <tags>
+        <tag>C++基础</tag>
+        <tag>计算机基础</tag>
+        <tag>数字的表示方法</tag>
       </tags>
   </entry>
   <entry>
@@ -125,86 +198,6 @@
       </tags>
   </entry>
   <entry>
-    <title>程序中的数据类型转换</title>
-    <url>/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
-    <content><![CDATA[<h3 id="基本内置类型"><a href="#基本内置类型" class="headerlink" title="基本内置类型"></a>基本内置类型</h3><ul>
-<li>short</li>
-<li>int</li>
-<li>long</li>
-<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
-<li>float</li>
-<li>double</li>
-<li>long double</li>
-<li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
-<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
-<li>bool</li>
-</ul>
-<h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
-<li>明确知晓数值不可能为负数时，选用无符号类型<a id="more"></a></li>
-<li>使用int执行整数运算（short太小，long跟int 一样；若整数超出int表示范围，选long long）</li>
-<li>在算术表达式中不要使用 char 或 bool，只有在存放字符或布尔值时才使用它们。因为类型 char在一些机器上是有符号的，而在另一些机器上又是无符号的， 所以如果使用 char 进行运算特别容易出问题。如果需要使用一个不大的整数， 那么明确指定它的类型是 Signed char 或者 uns igned char</li>
-<li>执行浮点数运算选用 double，这是因为 float 通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double 提供的精度在一般情况下是没有必要的， 沉且它带来的运行时消耗也不容忽视</li>
-</ul>
-<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
-<li>当我们把一个非布尔类型的算术值赋给布尔类型时，初始值为0则结果为 false, 否则结果为 true</li>
-<li>当我们把一个布尔值赋给非布尔类型时，初始值为 false则结果为0，初始值为 true 则结果为1</li>
-<li>当我们把一个浮点数赋给整数类型时，进行了近似处理。结果值将仅保留浮点数中小数点之前的部分</li>
-<li>当我们把一个整数值赋给浮点类型时，小数部分记为0。如果该整数所占的空间超过了浮点类型的容量，精度可能有损失</li>
-<li>当我们赋给无符号类型一个超出它表示范围的值时，结果是初始值对无符号类型表示数值总数取模后的余数。例如，8比特大小的 unsigned char 可以表示0至 255 区间内的值，如果我们赋了一个区间以外的值，则实际的结果是该值对 256 取模后所得的余数。因此，把-1赋给＆比特大小的 unsigned char 所得的结果是255</li>
-<li>当我们赋给带符号类型一个超出它表示范围的值时，结果是末定义的(undefined)。此时，程序可能继续工作、可能崩溃，也可能生成垃圾数据</li>
-</ul>
-<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ul>
-<li>当一个算数表达式中既有无符号数又有int值时，那么int值就会转换成无符号数。int型转无符号数的过程与把int值直接赋给无符号变量一样：把负数转换为无符号数类似于直接给无符号数赋一个负值，结果等于这个负数加上无符号数的模</li>
-<li>无符号数永远不小于0，无符号数用于循环中需注意</li>
-</ul>
-]]></content>
-      <categories>
-        <category>C++基础</category>
-      </categories>
-      <tags>
-        <tag>C++基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>C++基础-main函数返回值问题</title>
-    <url>/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：<a id="more"></a></p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"sssss"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编译运行之后使用 ”echo $?“ 观察系统接收到的返回值，发现为255。还在纳闷这个值从何而来，实在惭愧一时没想起来<strong>计算机采用补码形式存储数据</strong>，特此记录</p>
-<h3 id="计算机基础-数字的表示方法"><a href="#计算机基础-数字的表示方法" class="headerlink" title="计算机基础-数字的表示方法"></a>计算机基础-数字的表示方法</h3><p>计算机中有符号整数有三种表示方法——-原码、反码、补码。</p>
-<ul>
-<li><p>原码：第一位表示符号位，后面为有符号整数绝对值的二进制形式</p>
-</li>
-<li><p>反码：有符号正整数的反码等于原码；负整数的反码为第一位符号位不变，其后每一位变成相反数</p>
-</li>
-<li><p>补码：有符号正整数的补码等于原码；负整数的补码为反码+1</p>
-<p><strong>总结：</strong></p>
-<p><strong>有符号正整数原码=反码=补码</strong></p>
-<p><strong>有符号负整数反码等于原码除符号位不变外，其余每一位取反；补码等于原码除符号位不变外，其余每一位取反再加1</strong></p>
-</li>
-</ul>
-<p>举例：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">十进制-----------------二进制原码-------------反码-----------------补码</span><br><span class="line">  9                   0000 1001          0000 1001           0000 1001</span><br><span class="line"> -9                   1000 1001          1111 0110           1111 0111</span><br><span class="line"> 127                  0111 1111          0111 1111           0111 1111</span><br><span class="line">-127                  1111 1111          1000 0000           1000 0001</span><br><span class="line"> 128                  1000 0000          1000 0000           1000 0000</span><br><span class="line">-128             0001 1000 0000     0001 0111 1111      0001 1000 0000</span><br></pre></td></tr></table></figure>
-
-<h3 id="C-基础-main函数返回值问题-1"><a href="#C-基础-main函数返回值问题-1" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h3><p>回到main函数的返回值问题，为何显示255？</p>
-<p>因为<strong>系统用8bits的无符号数标识退出状态，所以退出的状态值为0至255</strong>，而有符号整型 -1 的补码形式为 1111 1111 对应无符号整型为 255</p>
-<p>那么问题来了，既然系统的退出状态值为8bits的无符号数，取值范围就是0-255，如果我在函数里面返回了超255的数又会怎样呢？很简单，返回的值会被<strong>截断</strong></p>
-<p>比如：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果main函数最终return 257;</span><br><span class="line">257：</span><br><span class="line">二进制原码&#x3D;反码&#x3D;补码：0000 0001 0000 0001</span><br></pre></td></tr></table></figure>
-
-<p>那么，系统会截取最低8bits，即 0000 0001 ,最终编译运行之后再”echo $?“ 得到的值就是 1</p>
-]]></content>
-      <categories>
-        <category>C++基础</category>
-      </categories>
-      <tags>
-        <tag>C++基础</tag>
-        <tag>计算机基础</tag>
-        <tag>数字的表示方法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>服务器SSH被字典爆破时记录密码</title>
     <url>/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="../../../../../../image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
@@ -268,23 +261,78 @@
       </tags>
   </entry>
   <entry>
-    <title>About</title>
-    <url>/2020/07/24/About/</url>
-    <content><![CDATA[<h2 id="About"><a href="#About" class="headerlink" title="About"></a>About</h2><p>  ——初来乍到，请多关照（^_^）—–</p>
-<p>21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。<a id="more"></a>备考期间不定时更新（其实是不想复习了就更新hahahhahaha），内容随缘。可能是技术类文章，也可能是读后感、感悟之类的。备考期间会着重复习数据结构、算法、C++，刷力扣之类的，所以未来一段时间可能算法类多一点。另外，会抽空看一点系统介绍Linux的电子书（虽然Linux是我目前的主系统，但不得不说，我对它缺乏系统性的了解，很难深入….）。考试之后有想法入坑CTF（其实是想入坑很久了，苦于….），到时候也会更新自己的学习感悟。</p>
-<p>如果有大神发现我的博客有误，可以通过以下方式联系我改正，万分感激：</p>
-<ul>
-<li>email:<a href="mailto:komorebilzh@gmail.com">komorebilzh@gmail.com</a></li>
-<li>QQ:3360207672</li>
-<li>twitter:<a href="https://twitter.com/messages" target="_blank" rel="noopener">→_→</a></li>
-</ul>
-<p>———-THE END———</p>
+    <title>没有进程号的进程</title>
+    <url>/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，<a id="more"></a>一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
+<p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png" alt=""></p>
+<p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psef.jpeg" alt=""></p>
+<p>很明显，也没有什么发现，于是他觉得这可能是某个僵尸进程所有。由于linux系统中，如果一个进程成为僵尸进程之后，用ps命令查看时，该进程的状态栏会被标记为<strong>defunct</strong>，于是他试图用ps命令查找服务器上的僵尸进程：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psaux.png" alt=""></p>
+<p>但是很遗憾，还是没有什么发现，甚至通过*<em>lsof -i:port *</em>命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/telnet.png" alt=""></p>
+<p>端口是通的，说明有后台是有一个正常进程在处理它，所以小L开始慌张了，他下一步想确认到底是不是某些不知名人物所为。如果是不知名人物所为，那大概了会有网络连接的，所以小L用了ss命令：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/ss.png" alt=""></p>
+<p>还好，通过20090端口只有一个处于ESTAB状态的连接，这是他自己telnet的结果，他稍稍心安。但是这个进程到底是谁建立的呢？小L同学走投无路之下，只好尝试笨办法–直接全局搜索端口号：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/grep.png" alt=""></p>
+<p>还真让他找出来了一些东西，但是很遗憾，这并不是他要的结果，只是服务器上部署的普罗米修斯程序的日志里面有数据刚好匹配上了20090这个字符串。小L同学继续在网络的海洋里游啊游，还真让他找到了一些东西。</p>
+<p><strong>rpcinfo</strong>工具可以显示所有使用<strong>portmap</strong>注册的程序的信息。rpcinfo -p x.x.x.x 可以基于rpc协议访问服务器，通过服务器返回的响应信息探测主机x.x.x.x上已经注册的rpc服务的信息。</p>
+<p><strong>portmap</strong> 是一个rpc端口映射程序，最初由 Sun 公司开发，它可以将 rpc 程序号映射到网络上的端口号。rpc进程在启动时通知 portmap，显示它们正在监视的端口号以及它们提供服务的 rpc 程序号，然后客户端系统使用特定的 rpc 程序编号联系服务器上的端口映射服务（portmap），然后 portmap 再将客户端重定向到正确的端口号以与其预期的服务进行通信。</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/rpcinfo.png" alt=""></p>
+<p>可以看到，让小L同学备受困扰的20090端口赫然在列！但是这个<strong>nlockmgr</strong>服务是个什么呢？</p>
+<p>nlockmgr是在NFS中用来管理文件的锁定的，防止多个客户端同时写入某个文件是产生冲突。</p>
+<p>NFS服务需要开启 mountd,nfs,nlockmgr,portmapper,rquotad这5个服务，其中nfs、portmapper的端口是固定的，另外三个服务的端口是随机分配的，也可以给mountd,nlockmgr,rquotad设置固定的端口。具体方法很简单，也不再赘述，问问神奇的搜索引擎吧。</p>
 ]]></content>
       <categories>
-        <category>about</category>
+        <category>运维经验</category>
+        <category>linux命令</category>
       </categories>
       <tags>
-        <tag>about</tag>
+        <tag>linux</tag>
+        <tag>运维经验</tag>
+        <tag>linux命令</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>程序中的数据类型转换</title>
+    <url>/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<h3 id="基本内置类型"><a href="#基本内置类型" class="headerlink" title="基本内置类型"></a>基本内置类型</h3><ul>
+<li>short</li>
+<li>int</li>
+<li>long</li>
+<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
+<li>float</li>
+<li>double</li>
+<li>long double</li>
+<li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
+<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
+<li>bool</li>
+</ul>
+<h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
+<li>明确知晓数值不可能为负数时，选用无符号类型<a id="more"></a></li>
+<li>使用int执行整数运算（short太小，long跟int 一样；若整数超出int表示范围，选long long）</li>
+<li>在算术表达式中不要使用 char 或 bool，只有在存放字符或布尔值时才使用它们。因为类型 char在一些机器上是有符号的，而在另一些机器上又是无符号的， 所以如果使用 char 进行运算特别容易出问题。如果需要使用一个不大的整数， 那么明确指定它的类型是 Signed char 或者 uns igned char</li>
+<li>执行浮点数运算选用 double，这是因为 float 通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double 提供的精度在一般情况下是没有必要的， 沉且它带来的运行时消耗也不容忽视</li>
+</ul>
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
+<li>当我们把一个非布尔类型的算术值赋给布尔类型时，初始值为0则结果为 false, 否则结果为 true</li>
+<li>当我们把一个布尔值赋给非布尔类型时，初始值为 false则结果为0，初始值为 true 则结果为1</li>
+<li>当我们把一个浮点数赋给整数类型时，进行了近似处理。结果值将仅保留浮点数中小数点之前的部分</li>
+<li>当我们把一个整数值赋给浮点类型时，小数部分记为0。如果该整数所占的空间超过了浮点类型的容量，精度可能有损失</li>
+<li>当我们赋给无符号类型一个超出它表示范围的值时，结果是初始值对无符号类型表示数值总数取模后的余数。例如，8比特大小的 unsigned char 可以表示0至 255 区间内的值，如果我们赋了一个区间以外的值，则实际的结果是该值对 256 取模后所得的余数。因此，把-1赋给＆比特大小的 unsigned char 所得的结果是255</li>
+<li>当我们赋给带符号类型一个超出它表示范围的值时，结果是末定义的(undefined)。此时，程序可能继续工作、可能崩溃，也可能生成垃圾数据</li>
+</ul>
+<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ul>
+<li>当一个算数表达式中既有无符号数又有int值时，那么int值就会转换成无符号数。int型转无符号数的过程与把int值直接赋给无符号变量一样：把负数转换为无符号数类似于直接给无符号数赋一个负值，结果等于这个负数加上无符号数的模</li>
+<li>无符号数永远不小于0，无符号数用于循环中需注意</li>
+</ul>
+]]></content>
+      <categories>
+        <category>C++基础</category>
+      </categories>
+      <tags>
+        <tag>C++基础</tag>
       </tags>
   </entry>
 </search>
