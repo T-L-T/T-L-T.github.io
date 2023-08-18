@@ -1,6 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>C++基础-main函数返回值问题</title>
+    <url>/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：<a id="more"></a></p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"sssss"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译运行之后使用 ”echo $?“ 观察系统接收到的返回值，发现为255。还在纳闷这个值从何而来，实在惭愧一时没想起来<strong>计算机采用补码形式存储数据</strong>，特此记录</p>
+<h3 id="计算机基础-数字的表示方法"><a href="#计算机基础-数字的表示方法" class="headerlink" title="计算机基础-数字的表示方法"></a>计算机基础-数字的表示方法</h3><p>计算机中有符号整数有三种表示方法——-原码、反码、补码。</p>
+<ul>
+<li><p>原码：第一位表示符号位，后面为有符号整数绝对值的二进制形式</p>
+</li>
+<li><p>反码：有符号正整数的反码等于原码；负整数的反码为第一位符号位不变，其后每一位变成相反数</p>
+</li>
+<li><p>补码：有符号正整数的补码等于原码；负整数的补码为反码+1</p>
+<p><strong>总结：</strong></p>
+<p><strong>有符号正整数原码=反码=补码</strong></p>
+<p><strong>有符号负整数反码等于原码除符号位不变外，其余每一位取反；补码等于原码除符号位不变外，其余每一位取反再加1</strong></p>
+</li>
+</ul>
+<p>举例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">十进制-----------------二进制原码-------------反码-----------------补码</span><br><span class="line">  9                   0000 1001          0000 1001           0000 1001</span><br><span class="line"> -9                   1000 1001          1111 0110           1111 0111</span><br><span class="line"> 127                  0111 1111          0111 1111           0111 1111</span><br><span class="line">-127                  1111 1111          1000 0000           1000 0001</span><br><span class="line"> 128                  1000 0000          1000 0000           1000 0000</span><br><span class="line">-128             0001 1000 0000     0001 0111 1111      0001 1000 0000</span><br></pre></td></tr></table></figure>
+
+<h3 id="C-基础-main函数返回值问题-1"><a href="#C-基础-main函数返回值问题-1" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h3><p>回到main函数的返回值问题，为何显示255？</p>
+<p>因为<strong>系统用8bits的无符号数标识退出状态，所以退出的状态值为0至255</strong>，而有符号整型 -1 的补码形式为 1111 1111 对应无符号整型为 255</p>
+<p>那么问题来了，既然系统的退出状态值为8bits的无符号数，取值范围就是0-255，如果我在函数里面返回了超255的数又会怎样呢？很简单，返回的值会被<strong>截断</strong></p>
+<p>比如：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果main函数最终return 257;</span><br><span class="line">257：</span><br><span class="line">二进制原码&#x3D;反码&#x3D;补码：0000 0001 0000 0001</span><br></pre></td></tr></table></figure>
+
+<p>那么，系统会截取最低8bits，即 0000 0001 ,最终编译运行之后再”echo $?“ 得到的值就是 1</p>
+]]></content>
+      <categories>
+        <category>C++基础</category>
+      </categories>
+      <tags>
+        <tag>C++基础</tag>
+        <tag>计算机基础</tag>
+        <tag>数字的表示方法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>服务器SSH被字典爆破时记录密码</title>
+    <url>/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="../../../../../../image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
+<p>在网上找到了两种方法：一种是通过patch，也就是打补丁的方式。因为默认的ssh日志是不带密码记录功能的，于是可以重新编译openssh并打上补丁，使它能够记录，但尝试之后这种方法并没有成功，因为在打补丁的过程中报如下错误：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">patch --dry-run &lt; syslog.patch</span><br><span class="line">checking file auth-passwd.c </span><br><span class="line">patch: **** malformed patch at line 4: &#123;</span><br></pre></td></tr></table></figure>
+
+<p>我对这方面不是很了解，也没有找到解决方法，遂放弃。</p>
+<p>另一种方法是使用docker部署ssh蜜罐记录下爆破密码。但尝试之后发现效果不是很理想，因为对方并不仅仅针对单一端口进行爆破，而是不断变换爆破端口。这就导致docker端口与主机端口间的映射出现问题。举个例子：当docker的22端口映射主机的22端口时，对方如果针对22端口进行爆破，肯定能记录下密码，但要是对方针对33端口进行爆破呢？遂放弃。兜兜转转终于找到如下方法：</p>
+<h5 id="主机环境：Centos-7"><a href="#主机环境：Centos-7" class="headerlink" title="主机环境：Centos 7"></a>主机环境：Centos 7</h5><p>1、到官网下载源码包(可以先去官网看看最新版本的版本号)<br><code>wget https://mirror.leaseweb.com/pub/OpenBSD/OpenSSH/portable/openssh-8.4p1.tar.gz</code></p>
+<p>2、创建配置文件目录(也可以使用默认目录，下文中configure命令完成时会显示配置文件目录以及安装目录)<br><code>sudo mkdir -p /usr/local/ssh8.4p1/conf</code></p>
+<p>3、安装依赖环境<br><code>sudo yum install gcc zlib-devel openssl-devel -y</code></p>
+<p>4、解压之前下载的源码包<br><code>tar -zxvf openssh-8.4p1.tar.gz</code></p>
+<p>5、修改源码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#进入解压目录</span><br><span class="line">cd .&#x2F;openssh-8.4p1</span><br><span class="line"></span><br><span class="line">#编辑auth-passwd.c文件</span><br><span class="line">vim .&#x2F;auth-passwd.c</span><br><span class="line"></span><br><span class="line">#找到函数auth_password，添加以下代码</span><br><span class="line">logit(&quot;username: %s password: %s&quot;, authctxt-&gt;user, password);</span><br></pre></td></tr></table></figure>
+
+<p><img src="../../../../../../image/2020/11/10/auth-passwd.png" alt="修改后的源码"></p>
+<p>6、编译安装</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#编译</span><br><span class="line"> .&#x2F;configure --sysconfdir&#x3D;&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;conf&#x2F; --without-zlib-version-check --with-md5-passwords --prefix&#x3D;&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;</span><br><span class="line"></span><br><span class="line">#参数说明</span><br><span class="line">--sysconfdir #配置文件目录</span><br><span class="line">--without-zlib-version-check</span><br><span class="line">--with-md5-passwords</span><br><span class="line">--prefix #安装目录</span><br><span class="line"></span><br><span class="line">(Ps:此命令完成时会显示配置文件位置和安装位置，后面需要用到配置文件位置)</span><br><span class="line"></span><br><span class="line">#make &amp;&amp; make install</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p>7、登录测试，查看日志</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#修改配置文件</span><br><span class="line">sudo vim &#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;conf&#x2F;sshd_config</span><br><span class="line"></span><br><span class="line">#修改ssh端口</span><br><span class="line">Port 1234</span><br><span class="line"></span><br><span class="line">#禁止root用户登录</span><br><span class="line">PermitRootLogin no</span><br><span class="line"></span><br><span class="line">#启动(必须使用绝对路径，这跟ssh服务自身有关)</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;sbin&#x2F;sshd</span><br><span class="line">#如果启动失败请查看之前是否有安装openssh</span><br><span class="line"></span><br><span class="line">#连接（如果连接不上请检查防火墙，查看端口是否开放）</span><br><span class="line">ssh -p 1234 xxx@xxx.xxx.xxx.xxx</span><br><span class="line"></span><br><span class="line">#查看日志</span><br><span class="line">sudo grep username &#x2F;var&#x2F;log&#x2F;secure</span><br></pre></td></tr></table></figure>
+
+<p><img src="../../../../../../image/2020/11/10/log.png" alt="效果"><br>可以看到显示结果还是不够纯粹，还有一些其他信息，如果想要看到更纯粹的显示内容，可以再次利用管道符和grep进行过滤<br><code>sudo grep username /var/log/secure | grep password | grep sshd</code></p>
+<p>（Ps：这里顺便记录一下，管道符的作用是将管道符前命令的输出作为管道符后命令的输入）</p>
+<h5 id="到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来"><a href="#到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来" class="headerlink" title="到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来"></a>到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#首先新建保存密码的文件</span><br><span class="line">touch .&#x2F;dir.txt</span><br><span class="line"></span><br><span class="line">#使用grep与awk将内容提取出来</span><br><span class="line">sudo cat &#x2F;var&#x2F;log&#x2F;secure | grep -v &#39;你的用户名&#39; | grep -v &#39;你的密码&#39; | grep &#39;password:&#39; |grep &#39;username:&#39; |grep &#39;sshd&#39;| awk -F &#39; &#39; &#39;&#123;print $7,$9&#125;&#39;&gt;&gt;dir.txt</span><br></pre></td></tr></table></figure>
+
+<p>管道符‘|’就像一道滤筛有木有……每使用一次就将结果过滤一次<br>grep的-v选项是反向选择，所有包含指定字符串的记录都将被过滤掉，因为日志文件中肯定包含了你自己登录的正确用户名和正确密码，你一定不想要自己的密码流出去是不是，毕竟只有自己知道的密码才相对安全嘛</p>
+<p>awk命令的-F选项表示以何种符号分割， $n表示第n个参数(分割后的第n个参数)，我这里使用“ ”也即是空格符进行分割</p>
+<p>注意结尾 “&gt;&gt;dir.txt” 那里一定是两个”&gt;”,因为“&gt;”重定向输出时会覆盖文件中原有的内容，而“&gt;&gt;”则是会将内容追加在文件已有内容末尾</p>
+<p>我这里不仅提取了密码，还顺便提取出了用户名，后续可以根据需要进行再次加工</p>
+<h5 id="至此密码也已经提取出来了"><a href="#至此密码也已经提取出来了" class="headerlink" title="至此密码也已经提取出来了"></a>至此密码也已经提取出来了</h5><p>但是对方还在持续爆破，作为一名运维人员，我怎么可能定期手动执行上述命令提取密码？当然要自动化啦！</p>
+<h5 id="自动化提取密码"><a href="#自动化提取密码" class="headerlink" title="自动化提取密码"></a>自动化提取密码</h5><p>将命令转化为脚本</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#新建dir.sh并写入如下内容：</span><br><span class="line">vim .&#x2F;dir.sh</span><br><span class="line"></span><br><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;zsh</span><br><span class="line">cat &#x2F;var&#x2F;log&#x2F;secure | grep -v &#39;你的用户名&#39; | grep -v &#39;你的密码&#39; | grep &#39;password:&#39; |grep &#39;username:&#39; |grep &#39;sshd&#39;| awk -F &#39; &#39; &#39;&#123;print $7,$9&#125;&#39;&gt;&gt;dir.txt</span><br><span class="line"></span><br><span class="line">#给脚本赋予可执行权限</span><br><span class="line">sudo chmod +x .&#x2F;dir.sh</span><br></pre></td></tr></table></figure>
+
+<p>要想实现上述命令的自动化，有两个要点：</p>
+<ul>
+<li>root权限执行脚本</li>
+<li>定时执行脚本</li>
+</ul>
+<p>因为上述命令需要root权限才能执行，写成脚本之后自然也需要root权限。在网上查找之后选择expect。其原理也就是在输入su命令之后由expect自动填写密码</p>
+<p><code>sudo yum install expect</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#新建auto.sh并写入如下内容：</span><br><span class="line">vim .&#x2F;auto.sh</span><br><span class="line"></span><br><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;expect</span><br><span class="line">spawn su root</span><br><span class="line">expect &quot;Password:&quot;</span><br><span class="line">send &quot;你的密码\r&quot;</span><br><span class="line">send &quot;cd 脚本所在目录\r&quot;</span><br><span class="line">send &quot;.&#x2F;dir.sh\r&quot;</span><br><span class="line"></span><br><span class="line">expect eof</span><br><span class="line">exit     </span><br><span class="line"></span><br><span class="line">#给脚本赋予可执行权限</span><br><span class="line">sudo chmod +x .&#x2F;auto.sh</span><br></pre></td></tr></table></figure>
+
+<p>至此第一个问题解决了，第二个问题也很好解决。Linux中crontab是用来定期执行程序的命令。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#新建定时任务</span><br><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">#输入如下</span><br><span class="line">0 0 *&#x2F;3 * * auto.sh脚本所在位置的绝对路径&#x2F;auto.sh</span><br><span class="line"></span><br><span class="line">#查看定时任务是否创建成功</span><br><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
+
+<p>上述命令的意思是每隔三天，在零点零分的时候定期执行auto.sh脚本（crontab命令的具体用法可自行百度或google）</p>
+<p>新建任务格式详解（/etc/crontab）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># For details see man 4 crontabs</span><br><span class="line"></span><br><span class="line"># Example of job definition:</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday&#x3D;0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></table></figure>
+
+<p>至此全部过程就结束了，接下来就可以等着自己密码字典的成型啦！！！！</p>
+]]></content>
+      <categories>
+        <category>服务器安全</category>
+      </categories>
+      <tags>
+        <tag>安全</tag>
+        <tag>服务器安全</tag>
+        <tag>SSH</tag>
+        <tag>字典爆破</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编译安装MongoDB（含gcc环境）</title>
+    <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="编译安装MongoDB（含gcc环境）"><a href="#编译安装MongoDB（含gcc环境）" class="headerlink" title="编译安装MongoDB（含gcc环境）"></a>编译安装MongoDB（含gcc环境）</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+<p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
+<h3 id="二、编译安装MongoDB"><a href="#二、编译安装MongoDB" class="headerlink" title="二、编译安装MongoDB"></a>二、编译安装MongoDB</h3><p>mongoDB源码下载地址：<a href="https://www.mongodb.com/try/download/community-kubernetes-operator" target="_blank" rel="noopener">https://www.mongodb.com/try/download/community-kubernetes-operator</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#安装编译依赖</span><br><span class="line">yum install pcre-devel python-devel python3-devel openssl-*  liblzma-dev xz-devel yum install libcurl*</span><br><span class="line"># 安装pip3</span><br><span class="line">python3 -m pip install pip-23.2.1-py3-none-any.whl</span><br><span class="line">#安装scon</span><br><span class="line">下载地址：https:&#x2F;&#x2F;scons.org&#x2F;pages&#x2F;download.html</span><br><span class="line">解压之后进入目录：python3 setup.py install</span><br><span class="line">验证：scons -h</span><br><span class="line">#编译安装mongo，需要很多空间（可用空间大于20G左右最好），以及很长时间（几小时）</span><br><span class="line">tar -zxvf .&#x2F;mongodb-src-r4.4.24-rc0.tar.gz</span><br><span class="line">cd .&#x2F;mongodb-src-r4.4.24-rc0</span><br><span class="line">pip3 install -r .&#x2F;buildscripts&#x2F;requirements.txt</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons &amp;&amp; &#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons PREFIX&#x3D;&#x2F;apps&#x2F;server&#x2F;mongo  install</span><br><span class="line">#上述编译出来的可执行程序太大，因为里面包含了调试信息，需要去掉</span><br><span class="line">cd .&#x2F;bin</span><br><span class="line">strip mongo mongod mongos</span><br><span class="line"></span><br><span class="line">编译完毕！！（含泪洒下一把血泪 5555）</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、升级gcc环境"><a href="#三、升级gcc环境" class="headerlink" title="三、升级gcc环境"></a>三、升级gcc环境</h3><p>如果在上述编译过程中报错需要更高版本的gcc环境，可按照以下步骤升级</p>
+<p>gcc源码包镜像下载站：<a href="http://ftp.tsukuba.wide.ad.jp/software/gcc/" target="_blank" rel="noopener">http://ftp.tsukuba.wide.ad.jp/software/gcc/</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -xvf gcc-5.3.0.tar.gz</span><br><span class="line">cd gcc-5.3.0</span><br><span class="line">yum -y install bzip2 wget git</span><br><span class="line">.&#x2F;contrib&#x2F;download_prerequisites</span><br><span class="line">cd ..&#x2F; &amp;&amp; mkdir gcc-build-5.3.0 &amp;&amp; cd gcc-build-5.3.0</span><br><span class="line">..&#x2F;gcc-5.3.0&#x2F;configure --enable-checking&#x3D;release --enable-languages&#x3D;c,c++ --disable-multilib</span><br><span class="line">make &amp;&amp; make install   # 需要等很久</span><br><span class="line"># 新建远程连接后gcc -version验证</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="四、编译安装过程中的问题"><a href="#四、编译安装过程中的问题" class="headerlink" title="四、编译安装过程中的问题"></a>四、编译安装过程中的问题</h3><p><strong>1、./contrib/download_prerequisites过程中报错校验不通过</strong></p>
+<p>重新执行脚本下载即可</p>
+]]></content>
+      <categories>
+        <category>中间件编译</category>
+      </categories>
+      <tags>
+        <tag>中间件</tag>
+        <tag>源码编译</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>About</title>
     <url>/2020/07/24/About/</url>
     <content><![CDATA[<h2 id="About"><a href="#About" class="headerlink" title="About"></a>About</h2><p>  ——初来乍到，请多关照（^_^）—–</p>
@@ -18,6 +145,97 @@
       </categories>
       <tags>
         <tag>about</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编译安装erlang/rabbitmq</title>
+    <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85erlang-rabbitmq/</url>
+    <content><![CDATA[<h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang/Rabbitmq"></a>编译安装Erlang/Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+<p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
+<h3 id="二、编译安装Erlang"><a href="#二、编译安装Erlang" class="headerlink" title="二、编译安装Erlang"></a>二、编译安装Erlang</h3><p>erlang与rabbitmq之间存在版本依赖，具体查看<a href="https://www.rabbitmq.com/which-erlang.html#compatibility-matrix" target="_blank" rel="noopener">此处</a></p>
+<p>Erlang下载地址： <a href="https://www.erlang.org/downloads" target="_blank" rel="noopener">点此下载</a></p>
+<p><strong>编译过程：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum -y install makegcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC unixODBC-devel httpd python-simplejson</span><br><span class="line">wget http:&#x2F;&#x2F;erlang.org&#x2F;download&#x2F;otp_src_19.2.tar.gz</span><br><span class="line">tar -xzvf otp_src_19.2.tar.gz</span><br><span class="line">cd otp_src_19.2</span><br><span class="line">.&#x2F;configure  --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2 --enable-smp-support  --enable-threads  --enable-sctp --enable-kernel-poll --enable-hipe  --with-ssl --without-javac</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置环境变量：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;profile</span><br><span class="line"># 文件末尾添加以下</span><br><span class="line">export ERL_HOME&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2</span><br><span class="line">export PATH&#x3D;$PATH:$ERL_HOME&#x2F;bin</span><br><span class="line"># 重新加载配置文件</span><br><span class="line">source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure>
+
+<p><strong>验证：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">erl</span><br><span class="line"># 弹出erlang 命令列即可</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、编译安装Rabbitmq"><a href="#三、编译安装Rabbitmq" class="headerlink" title="三、编译安装Rabbitmq"></a>三、编译安装Rabbitmq</h3><p>rabbitmq源码包下载地址：<a href="https://github.com/rabbitmq/rabbitmq-server" target="_blank" rel="noopener">这里</a></p>
+<p><strong>编译过程：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -zxvf rabbitmq-server-3.9.13.tar</span><br><span class="line">cd rabbitmq-server-3.9.13</span><br><span class="line">make -j 4 &amp;&amp; make TARGET_DIR&#x3D;&#x2F;apps&#x2F;server&#x2F;rabbitmq-3.9.13 install</span><br></pre></td></tr></table></figure>
+
+<p>编译完成之后会在当前路径下看到可执行程序的目录sbin，可以删除多余文件及路径，最后保留如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rabbitmq-3.9.13</span><br><span class="line">├── deps</span><br><span class="line">├── erlang_ls.config</span><br><span class="line">├── escript</span><br><span class="line">├── plugins</span><br><span class="line">├── sbin</span><br><span class="line">└── scripts</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、Erlang-Rabbitmq编译安装过程中的问题"><a href="#四、Erlang-Rabbitmq编译安装过程中的问题" class="headerlink" title="四、Erlang/Rabbitmq编译安装过程中的问题"></a>四、Erlang/Rabbitmq编译安装过程中的问题</h3><p><strong>1、configure: error: No curses library functions found</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ncurses-devel -y</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、编译报错缺乏mix命令</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原因： 报错 &quot;找不到 mix 命令&quot; 是因为你在执行 RabbitMQ 的编译过程中缺少了 Elixir 环境，而 RabbitMQ 的一些组件可能使用了 Elixir 语言</span><br><span class="line">解决：下载编译安装elixir</span><br><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;elixir-lang&#x2F;elixir</span><br><span class="line">下载对应版本之后：</span><br><span class="line">unzip .&#x2F;elixir-1.14.2.zip</span><br><span class="line">cd .&#x2F;elixir-1.14.2</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Ps:需要注意的是编译安装的rabbitmq版本与elixir的版本之间有依赖关系，如：rabbitmq-3.9.13 版本需要elixir的版本 &gt;12 且 &lt;13</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、rsync: command not found报错</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install rsync -y</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、Your intltool is too old. You need intltool 0.x.0 or later…</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;download.gnome.org&#x2F;sources&#x2F;intltool&#x2F;</span><br><span class="line">下载解压之后进入目录</span><br><span class="line">.&#x2F;configuer </span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、在configure的时候提示XML::Parser perl module is required for intltool</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">perl -MCPAN -e shell</span><br><span class="line">#进入perl的命令行界面后安装缺少的XML::Parser模块</span><br><span class="line">install XML::Parser</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、you may need to install the CPAN module</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;metacpan.org&#x2F;dist&#x2F;CPAN</span><br><span class="line">tar -zxvf .&#x2F;CPAN-2.36.tar.gz</span><br><span class="line">cd .&#x2F;CPAN-2.36</span><br><span class="line">perl5.28.3 Makefile.PL</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>中间件编译</category>
+      </categories>
+      <tags>
+        <tag>中间件</tag>
+        <tag>源码编译</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>程序中的数据类型转换</title>
+    <url>/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<h3 id="基本内置类型"><a href="#基本内置类型" class="headerlink" title="基本内置类型"></a>基本内置类型</h3><ul>
+<li>short</li>
+<li>int</li>
+<li>long</li>
+<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
+<li>float</li>
+<li>double</li>
+<li>long double</li>
+<li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
+<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
+<li>bool</li>
+</ul>
+<h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
+<li>明确知晓数值不可能为负数时，选用无符号类型<a id="more"></a></li>
+<li>使用int执行整数运算（short太小，long跟int 一样；若整数超出int表示范围，选long long）</li>
+<li>在算术表达式中不要使用 char 或 bool，只有在存放字符或布尔值时才使用它们。因为类型 char在一些机器上是有符号的，而在另一些机器上又是无符号的， 所以如果使用 char 进行运算特别容易出问题。如果需要使用一个不大的整数， 那么明确指定它的类型是 Signed char 或者 uns igned char</li>
+<li>执行浮点数运算选用 double，这是因为 float 通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double 提供的精度在一般情况下是没有必要的， 沉且它带来的运行时消耗也不容忽视</li>
+</ul>
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
+<li>当我们把一个非布尔类型的算术值赋给布尔类型时，初始值为0则结果为 false, 否则结果为 true</li>
+<li>当我们把一个布尔值赋给非布尔类型时，初始值为 false则结果为0，初始值为 true 则结果为1</li>
+<li>当我们把一个浮点数赋给整数类型时，进行了近似处理。结果值将仅保留浮点数中小数点之前的部分</li>
+<li>当我们把一个整数值赋给浮点类型时，小数部分记为0。如果该整数所占的空间超过了浮点类型的容量，精度可能有损失</li>
+<li>当我们赋给无符号类型一个超出它表示范围的值时，结果是初始值对无符号类型表示数值总数取模后的余数。例如，8比特大小的 unsigned char 可以表示0至 255 区间内的值，如果我们赋了一个区间以外的值，则实际的结果是该值对 256 取模后所得的余数。因此，把-1赋给＆比特大小的 unsigned char 所得的结果是255</li>
+<li>当我们赋给带符号类型一个超出它表示范围的值时，结果是末定义的(undefined)。此时，程序可能继续工作、可能崩溃，也可能生成垃圾数据</li>
+</ul>
+<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ul>
+<li>当一个算数表达式中既有无符号数又有int值时，那么int值就会转换成无符号数。int型转无符号数的过程与把int值直接赋给无符号变量一样：把负数转换为无符号数类似于直接给无符号数赋一个负值，结果等于这个负数加上无符号数的模</li>
+<li>无符号数永远不小于0，无符号数用于循环中需注意</li>
+</ul>
+]]></content>
+      <categories>
+        <category>C++基础</category>
+      </categories>
+      <tags>
+        <tag>C++基础</tag>
       </tags>
   </entry>
   <entry>
@@ -66,45 +284,6 @@
         <tag>Ansible</tag>
         <tag>linux</tag>
         <tag>Devops</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>C++基础-main函数返回值问题</title>
-    <url>/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：<a id="more"></a></p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"sssss"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编译运行之后使用 ”echo $?“ 观察系统接收到的返回值，发现为255。还在纳闷这个值从何而来，实在惭愧一时没想起来<strong>计算机采用补码形式存储数据</strong>，特此记录</p>
-<h3 id="计算机基础-数字的表示方法"><a href="#计算机基础-数字的表示方法" class="headerlink" title="计算机基础-数字的表示方法"></a>计算机基础-数字的表示方法</h3><p>计算机中有符号整数有三种表示方法——-原码、反码、补码。</p>
-<ul>
-<li><p>原码：第一位表示符号位，后面为有符号整数绝对值的二进制形式</p>
-</li>
-<li><p>反码：有符号正整数的反码等于原码；负整数的反码为第一位符号位不变，其后每一位变成相反数</p>
-</li>
-<li><p>补码：有符号正整数的补码等于原码；负整数的补码为反码+1</p>
-<p><strong>总结：</strong></p>
-<p><strong>有符号正整数原码=反码=补码</strong></p>
-<p><strong>有符号负整数反码等于原码除符号位不变外，其余每一位取反；补码等于原码除符号位不变外，其余每一位取反再加1</strong></p>
-</li>
-</ul>
-<p>举例：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">十进制-----------------二进制原码-------------反码-----------------补码</span><br><span class="line">  9                   0000 1001          0000 1001           0000 1001</span><br><span class="line"> -9                   1000 1001          1111 0110           1111 0111</span><br><span class="line"> 127                  0111 1111          0111 1111           0111 1111</span><br><span class="line">-127                  1111 1111          1000 0000           1000 0001</span><br><span class="line"> 128                  1000 0000          1000 0000           1000 0000</span><br><span class="line">-128             0001 1000 0000     0001 0111 1111      0001 1000 0000</span><br></pre></td></tr></table></figure>
-
-<h3 id="C-基础-main函数返回值问题-1"><a href="#C-基础-main函数返回值问题-1" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h3><p>回到main函数的返回值问题，为何显示255？</p>
-<p>因为<strong>系统用8bits的无符号数标识退出状态，所以退出的状态值为0至255</strong>，而有符号整型 -1 的补码形式为 1111 1111 对应无符号整型为 255</p>
-<p>那么问题来了，既然系统的退出状态值为8bits的无符号数，取值范围就是0-255，如果我在函数里面返回了超255的数又会怎样呢？很简单，返回的值会被<strong>截断</strong></p>
-<p>比如：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果main函数最终return 257;</span><br><span class="line">257：</span><br><span class="line">二进制原码&#x3D;反码&#x3D;补码：0000 0001 0000 0001</span><br></pre></td></tr></table></figure>
-
-<p>那么，系统会截取最低8bits，即 0000 0001 ,最终编译运行之后再”echo $?“ 得到的值就是 1</p>
-]]></content>
-      <categories>
-        <category>C++基础</category>
-      </categories>
-      <tags>
-        <tag>C++基础</tag>
-        <tag>计算机基础</tag>
-        <tag>数字的表示方法</tag>
       </tags>
   </entry>
   <entry>
@@ -198,69 +377,6 @@
       </tags>
   </entry>
   <entry>
-    <title>服务器SSH被字典爆破时记录密码</title>
-    <url>/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="../../../../../../image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
-<p>在网上找到了两种方法：一种是通过patch，也就是打补丁的方式。因为默认的ssh日志是不带密码记录功能的，于是可以重新编译openssh并打上补丁，使它能够记录，但尝试之后这种方法并没有成功，因为在打补丁的过程中报如下错误：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">patch --dry-run &lt; syslog.patch</span><br><span class="line">checking file auth-passwd.c </span><br><span class="line">patch: **** malformed patch at line 4: &#123;</span><br></pre></td></tr></table></figure>
-
-<p>我对这方面不是很了解，也没有找到解决方法，遂放弃。</p>
-<p>另一种方法是使用docker部署ssh蜜罐记录下爆破密码。但尝试之后发现效果不是很理想，因为对方并不仅仅针对单一端口进行爆破，而是不断变换爆破端口。这就导致docker端口与主机端口间的映射出现问题。举个例子：当docker的22端口映射主机的22端口时，对方如果针对22端口进行爆破，肯定能记录下密码，但要是对方针对33端口进行爆破呢？遂放弃。兜兜转转终于找到如下方法：</p>
-<h5 id="主机环境：Centos-7"><a href="#主机环境：Centos-7" class="headerlink" title="主机环境：Centos 7"></a>主机环境：Centos 7</h5><p>1、到官网下载源码包(可以先去官网看看最新版本的版本号)<br><code>wget https://mirror.leaseweb.com/pub/OpenBSD/OpenSSH/portable/openssh-8.4p1.tar.gz</code></p>
-<p>2、创建配置文件目录(也可以使用默认目录，下文中configure命令完成时会显示配置文件目录以及安装目录)<br><code>sudo mkdir -p /usr/local/ssh8.4p1/conf</code></p>
-<p>3、安装依赖环境<br><code>sudo yum install gcc zlib-devel openssl-devel -y</code></p>
-<p>4、解压之前下载的源码包<br><code>tar -zxvf openssh-8.4p1.tar.gz</code></p>
-<p>5、修改源码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#进入解压目录</span><br><span class="line">cd .&#x2F;openssh-8.4p1</span><br><span class="line"></span><br><span class="line">#编辑auth-passwd.c文件</span><br><span class="line">vim .&#x2F;auth-passwd.c</span><br><span class="line"></span><br><span class="line">#找到函数auth_password，添加以下代码</span><br><span class="line">logit(&quot;username: %s password: %s&quot;, authctxt-&gt;user, password);</span><br></pre></td></tr></table></figure>
-
-<p><img src="../../../../../../image/2020/11/10/auth-passwd.png" alt="修改后的源码"></p>
-<p>6、编译安装</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#编译</span><br><span class="line"> .&#x2F;configure --sysconfdir&#x3D;&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;conf&#x2F; --without-zlib-version-check --with-md5-passwords --prefix&#x3D;&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;</span><br><span class="line"></span><br><span class="line">#参数说明</span><br><span class="line">--sysconfdir #配置文件目录</span><br><span class="line">--without-zlib-version-check</span><br><span class="line">--with-md5-passwords</span><br><span class="line">--prefix #安装目录</span><br><span class="line"></span><br><span class="line">(Ps:此命令完成时会显示配置文件位置和安装位置，后面需要用到配置文件位置)</span><br><span class="line"></span><br><span class="line">#make &amp;&amp; make install</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-
-<p>7、登录测试，查看日志</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#修改配置文件</span><br><span class="line">sudo vim &#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;conf&#x2F;sshd_config</span><br><span class="line"></span><br><span class="line">#修改ssh端口</span><br><span class="line">Port 1234</span><br><span class="line"></span><br><span class="line">#禁止root用户登录</span><br><span class="line">PermitRootLogin no</span><br><span class="line"></span><br><span class="line">#启动(必须使用绝对路径，这跟ssh服务自身有关)</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;sbin&#x2F;sshd</span><br><span class="line">#如果启动失败请查看之前是否有安装openssh</span><br><span class="line"></span><br><span class="line">#连接（如果连接不上请检查防火墙，查看端口是否开放）</span><br><span class="line">ssh -p 1234 xxx@xxx.xxx.xxx.xxx</span><br><span class="line"></span><br><span class="line">#查看日志</span><br><span class="line">sudo grep username &#x2F;var&#x2F;log&#x2F;secure</span><br></pre></td></tr></table></figure>
-
-<p><img src="../../../../../../image/2020/11/10/log.png" alt="效果"><br>可以看到显示结果还是不够纯粹，还有一些其他信息，如果想要看到更纯粹的显示内容，可以再次利用管道符和grep进行过滤<br><code>sudo grep username /var/log/secure | grep password | grep sshd</code></p>
-<p>（Ps：这里顺便记录一下，管道符的作用是将管道符前命令的输出作为管道符后命令的输入）</p>
-<h5 id="到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来"><a href="#到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来" class="headerlink" title="到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来"></a>到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#首先新建保存密码的文件</span><br><span class="line">touch .&#x2F;dir.txt</span><br><span class="line"></span><br><span class="line">#使用grep与awk将内容提取出来</span><br><span class="line">sudo cat &#x2F;var&#x2F;log&#x2F;secure | grep -v &#39;你的用户名&#39; | grep -v &#39;你的密码&#39; | grep &#39;password:&#39; |grep &#39;username:&#39; |grep &#39;sshd&#39;| awk -F &#39; &#39; &#39;&#123;print $7,$9&#125;&#39;&gt;&gt;dir.txt</span><br></pre></td></tr></table></figure>
-
-<p>管道符‘|’就像一道滤筛有木有……每使用一次就将结果过滤一次<br>grep的-v选项是反向选择，所有包含指定字符串的记录都将被过滤掉，因为日志文件中肯定包含了你自己登录的正确用户名和正确密码，你一定不想要自己的密码流出去是不是，毕竟只有自己知道的密码才相对安全嘛</p>
-<p>awk命令的-F选项表示以何种符号分割， $n表示第n个参数(分割后的第n个参数)，我这里使用“ ”也即是空格符进行分割</p>
-<p>注意结尾 “&gt;&gt;dir.txt” 那里一定是两个”&gt;”,因为“&gt;”重定向输出时会覆盖文件中原有的内容，而“&gt;&gt;”则是会将内容追加在文件已有内容末尾</p>
-<p>我这里不仅提取了密码，还顺便提取出了用户名，后续可以根据需要进行再次加工</p>
-<h5 id="至此密码也已经提取出来了"><a href="#至此密码也已经提取出来了" class="headerlink" title="至此密码也已经提取出来了"></a>至此密码也已经提取出来了</h5><p>但是对方还在持续爆破，作为一名运维人员，我怎么可能定期手动执行上述命令提取密码？当然要自动化啦！</p>
-<h5 id="自动化提取密码"><a href="#自动化提取密码" class="headerlink" title="自动化提取密码"></a>自动化提取密码</h5><p>将命令转化为脚本</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#新建dir.sh并写入如下内容：</span><br><span class="line">vim .&#x2F;dir.sh</span><br><span class="line"></span><br><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;zsh</span><br><span class="line">cat &#x2F;var&#x2F;log&#x2F;secure | grep -v &#39;你的用户名&#39; | grep -v &#39;你的密码&#39; | grep &#39;password:&#39; |grep &#39;username:&#39; |grep &#39;sshd&#39;| awk -F &#39; &#39; &#39;&#123;print $7,$9&#125;&#39;&gt;&gt;dir.txt</span><br><span class="line"></span><br><span class="line">#给脚本赋予可执行权限</span><br><span class="line">sudo chmod +x .&#x2F;dir.sh</span><br></pre></td></tr></table></figure>
-
-<p>要想实现上述命令的自动化，有两个要点：</p>
-<ul>
-<li>root权限执行脚本</li>
-<li>定时执行脚本</li>
-</ul>
-<p>因为上述命令需要root权限才能执行，写成脚本之后自然也需要root权限。在网上查找之后选择expect。其原理也就是在输入su命令之后由expect自动填写密码</p>
-<p><code>sudo yum install expect</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#新建auto.sh并写入如下内容：</span><br><span class="line">vim .&#x2F;auto.sh</span><br><span class="line"></span><br><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;expect</span><br><span class="line">spawn su root</span><br><span class="line">expect &quot;Password:&quot;</span><br><span class="line">send &quot;你的密码\r&quot;</span><br><span class="line">send &quot;cd 脚本所在目录\r&quot;</span><br><span class="line">send &quot;.&#x2F;dir.sh\r&quot;</span><br><span class="line"></span><br><span class="line">expect eof</span><br><span class="line">exit     </span><br><span class="line"></span><br><span class="line">#给脚本赋予可执行权限</span><br><span class="line">sudo chmod +x .&#x2F;auto.sh</span><br></pre></td></tr></table></figure>
-
-<p>至此第一个问题解决了，第二个问题也很好解决。Linux中crontab是用来定期执行程序的命令。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#新建定时任务</span><br><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">#输入如下</span><br><span class="line">0 0 *&#x2F;3 * * auto.sh脚本所在位置的绝对路径&#x2F;auto.sh</span><br><span class="line"></span><br><span class="line">#查看定时任务是否创建成功</span><br><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
-
-<p>上述命令的意思是每隔三天，在零点零分的时候定期执行auto.sh脚本（crontab命令的具体用法可自行百度或google）</p>
-<p>新建任务格式详解（/etc/crontab）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># For details see man 4 crontabs</span><br><span class="line"></span><br><span class="line"># Example of job definition:</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday&#x3D;0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></table></figure>
-
-<p>至此全部过程就结束了，接下来就可以等着自己密码字典的成型啦！！！！</p>
-]]></content>
-      <categories>
-        <category>服务器安全</category>
-      </categories>
-      <tags>
-        <tag>安全</tag>
-        <tag>服务器安全</tag>
-        <tag>SSH</tag>
-        <tag>字典爆破</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>没有进程号的进程</title>
     <url>/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，<a id="more"></a>一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
@@ -292,47 +408,6 @@
         <tag>linux</tag>
         <tag>运维经验</tag>
         <tag>linux命令</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>程序中的数据类型转换</title>
-    <url>/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
-    <content><![CDATA[<h3 id="基本内置类型"><a href="#基本内置类型" class="headerlink" title="基本内置类型"></a>基本内置类型</h3><ul>
-<li>short</li>
-<li>int</li>
-<li>long</li>
-<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
-<li>float</li>
-<li>double</li>
-<li>long double</li>
-<li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
-<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
-<li>bool</li>
-</ul>
-<h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
-<li>明确知晓数值不可能为负数时，选用无符号类型<a id="more"></a></li>
-<li>使用int执行整数运算（short太小，long跟int 一样；若整数超出int表示范围，选long long）</li>
-<li>在算术表达式中不要使用 char 或 bool，只有在存放字符或布尔值时才使用它们。因为类型 char在一些机器上是有符号的，而在另一些机器上又是无符号的， 所以如果使用 char 进行运算特别容易出问题。如果需要使用一个不大的整数， 那么明确指定它的类型是 Signed char 或者 uns igned char</li>
-<li>执行浮点数运算选用 double，这是因为 float 通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double 提供的精度在一般情况下是没有必要的， 沉且它带来的运行时消耗也不容忽视</li>
-</ul>
-<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
-<li>当我们把一个非布尔类型的算术值赋给布尔类型时，初始值为0则结果为 false, 否则结果为 true</li>
-<li>当我们把一个布尔值赋给非布尔类型时，初始值为 false则结果为0，初始值为 true 则结果为1</li>
-<li>当我们把一个浮点数赋给整数类型时，进行了近似处理。结果值将仅保留浮点数中小数点之前的部分</li>
-<li>当我们把一个整数值赋给浮点类型时，小数部分记为0。如果该整数所占的空间超过了浮点类型的容量，精度可能有损失</li>
-<li>当我们赋给无符号类型一个超出它表示范围的值时，结果是初始值对无符号类型表示数值总数取模后的余数。例如，8比特大小的 unsigned char 可以表示0至 255 区间内的值，如果我们赋了一个区间以外的值，则实际的结果是该值对 256 取模后所得的余数。因此，把-1赋给＆比特大小的 unsigned char 所得的结果是255</li>
-<li>当我们赋给带符号类型一个超出它表示范围的值时，结果是末定义的(undefined)。此时，程序可能继续工作、可能崩溃，也可能生成垃圾数据</li>
-</ul>
-<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ul>
-<li>当一个算数表达式中既有无符号数又有int值时，那么int值就会转换成无符号数。int型转无符号数的过程与把int值直接赋给无符号变量一样：把负数转换为无符号数类似于直接给无符号数赋一个负值，结果等于这个负数加上无符号数的模</li>
-<li>无符号数永远不小于0，无符号数用于循环中需注意</li>
-</ul>
-]]></content>
-      <categories>
-        <category>C++基础</category>
-      </categories>
-      <tags>
-        <tag>C++基础</tag>
       </tags>
   </entry>
 </search>
