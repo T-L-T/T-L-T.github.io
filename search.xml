@@ -1,6 +1,307 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>编译安装MongoDB（含gcc环境）</title>
+    <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="编译安装MongoDB（含gcc环境）"><a href="#编译安装MongoDB（含gcc环境）" class="headerlink" title="编译安装MongoDB（含gcc环境）"></a>编译安装MongoDB（含gcc环境）</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+<p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
+<h3 id="二、编译安装MongoDB"><a href="#二、编译安装MongoDB" class="headerlink" title="二、编译安装MongoDB"></a>二、编译安装MongoDB</h3><p>mongoDB源码下载地址：<a href="https://www.mongodb.com/try/download/community-kubernetes-operator" target="_blank" rel="noopener">https://www.mongodb.com/try/download/community-kubernetes-operator</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#安装编译依赖</span><br><span class="line">yum install pcre-devel python-devel python3-devel openssl-*  liblzma-dev xz-devel </span><br><span class="line">yum install libcurl*</span><br><span class="line"># 安装pip3</span><br><span class="line">python3 -m pip install pip-23.2.1-py3-none-any.whl</span><br><span class="line">#安装scon</span><br><span class="line">下载地址：https:&#x2F;&#x2F;scons.org&#x2F;pages&#x2F;download.html</span><br><span class="line">解压之后进入目录：python3 setup.py install</span><br><span class="line">验证：scons -h</span><br><span class="line">#编译安装mongo，需要很多空间（可用空间大于20G左右最好），以及很长时间（几小时）</span><br><span class="line">tar -zxvf .&#x2F;mongodb-src-r4.4.24-rc0.tar.gz</span><br><span class="line">cd .&#x2F;mongodb-src-r4.4.24-rc0</span><br><span class="line">#编译安装mongo3.2.22不需要这一步</span><br><span class="line">pip3 install -r .&#x2F;buildscripts&#x2F;requirements.txt</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons &amp;&amp; &#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons PREFIX&#x3D;&#x2F;apps&#x2F;server&#x2F;mongo  install</span><br><span class="line">(编译安装mongo-3.2.22为：scons mongo mongod mongos --disable-warnings-as-errors)</span><br><span class="line">#上述编译出来的可执行程序太大，因为里面包含了调试信息，需要去掉</span><br><span class="line">cd .&#x2F;bin</span><br><span class="line">strip mongo mongod mongos</span><br><span class="line"></span><br><span class="line">编译完毕！！（含泪洒下一把血泪 5555）</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、升级gcc环境"><a href="#三、升级gcc环境" class="headerlink" title="三、升级gcc环境"></a>三、升级gcc环境</h3><p>如果在上述编译过程中报错需要更高版本的gcc环境，可按照以下步骤升级</p>
+<p>gcc源码包镜像下载站：<a href="http://ftp.tsukuba.wide.ad.jp/software/gcc/" target="_blank" rel="noopener">http://ftp.tsukuba.wide.ad.jp/software/gcc/</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -xvf gcc-5.3.0.tar.gz</span><br><span class="line">cd gcc-5.3.0</span><br><span class="line">yum -y install bzip2 wget git</span><br><span class="line">.&#x2F;contrib&#x2F;download_prerequisites</span><br><span class="line">cd ..&#x2F; &amp;&amp; mkdir gcc-build-5.3.0 &amp;&amp; cd gcc-build-5.3.0</span><br><span class="line">..&#x2F;gcc-5.3.0&#x2F;configure --enable-checking&#x3D;release --enable-languages&#x3D;c,c++ --disable-multilib</span><br><span class="line">make &amp;&amp; make install   # 需要等很久</span><br><span class="line"># 新建远程连接后gcc -version验证</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="四、编译安装过程中的问题"><a href="#四、编译安装过程中的问题" class="headerlink" title="四、编译安装过程中的问题"></a>四、编译安装过程中的问题</h3><p><strong>1、./contrib/download_prerequisites过程中报错校验不通过</strong></p>
+<p>重新执行脚本下载即可</p>
+<p><strong>2、报错“src/third_party/wiredtiger/src/support/global.c:58: error: undefined reference to ‘__wt_checksum_init’”</strong></p>
+<p>看报错就是找不到函数__wt_checksum_init罢了，本来以为是个小问题，但是以C语言的方式引入头文件和函数声明之后依旧报错，无奈采用笨办法</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1、找到该函数的实现和定义文件</span><br><span class="line">[root@i-D2D4127B mongo-r3.2.22-rc0]# grep -irl  __wt_checksum_init .&#x2F;*</span><br><span class="line">.&#x2F;build&#x2F;opt&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.o</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;arm64&#x2F;crc32-arm64.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;power8&#x2F;crc32_wrapper.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;x86&#x2F;crc32-x86.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;zseries&#x2F;crc32-s390x.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;include&#x2F;extern.h</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.c</span><br><span class="line">2、因为我这里是arm机器，所以对应的应该是.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;arm64&#x2F;crc32-arm64.c文件中，其他同理；将该文件中所有的函数定义、实现、声明全部拷贝到报错的src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.c文件靠前的位置即可解决该报错</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、报错不支持硬件CRC</strong></p>
+<p>报错如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Compiling build&#x2F;opt&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.o</span><br><span class="line">&#x2F;tmp&#x2F;ccDpKqPX.s: Assembler messages:</span><br><span class="line">&#x2F;tmp&#x2F;ccDpKqPX.s:34: Error: selected processor does not support &#96;crc32cb w2,w2,w3&#39;</span><br><span class="line">&#x2F;tmp&#x2F;ccDpKqPX.s:58: Error: selected processor does not support &#96;crc32cx w2,w2,x4&#39;</span><br><span class="line">&#x2F;tmp&#x2F;ccDpKqPX.s:78: Error: selected processor does not support &#96;crc32cb w2,w2,w0&#39;</span><br><span class="line">scons: *** [build&#x2F;opt&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.o] Error 1</span><br><span class="line">scons: building terminated because of errors.</span><br></pre></td></tr></table></figure>
+
+<p>参考该大佬在树莓派编译mongo失败的经验：<a href="https://old.uwucocoa.moe/2019/11/compile-64bit-mongodb-server-on-raspberry-pi-4/" target="_blank" rel="noopener">大佬文章地址</a></p>
+<p>解决如下：</p>
+<p>在src/third_party/wiredtiger/SConscript文件中对应位置添加<em>env.Append(CFLAGS=[“-march=armv8-a+crc+simd”])</em>，最终的文件对应位置如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">......</span><br><span class="line">...</span><br><span class="line">if env.TargetOSIs(&#39;windows&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_win&quot;])</span><br><span class="line">    env.Append(CFLAGS&#x3D;[</span><br><span class="line">        &quot;&#x2F;wd4090&quot; # Ignore warning about mismatched const qualifiers</span><br><span class="line">    ])</span><br><span class="line">    if env[&#39;MONGO_ALLOCATOR&#39;] &#x3D;&#x3D; &#39;tcmalloc&#39;:</span><br><span class="line">        env.InjectThirdPartyIncludePaths(libraries&#x3D;[&#39;gperftools&#39;])</span><br><span class="line">        env.Append(CPPDEFINES&#x3D;[&#39;HAVE_LIBTCMALLOC&#39;])</span><br><span class="line">elif env.TargetOSIs(&#39;osx&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_darwin&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;solaris&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_solaris&quot;])</span><br><span class="line">    # For an explanation of __EXTENSIONS__,</span><br><span class="line">    # see http:&#x2F;&#x2F;docs.oracle.com&#x2F;cd&#x2F;E19253-01&#x2F;816-5175&#x2F;standards-5&#x2F;index.html</span><br><span class="line">    env.Append(CPPDEFINES&#x3D;[&quot;__EXTENSIONS__&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;freebsd&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_freebsd&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;openbsd&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_openbsd&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;linux&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_linux&quot;])</span><br><span class="line">    env.Append(CPPDEFINES&#x3D;[&quot;_GNU_SOURCE&quot;])</span><br><span class="line">    env.Append(CFLAGS&#x3D;[&quot;-march&#x3D;armv8-a+crc+simd&quot;])</span><br><span class="line">else:</span><br><span class="line">    print(&quot;Wiredtiger is not supported on this platform. &quot; +</span><br><span class="line">        &quot;Please generate an approriate wiredtiger_config.h&quot;)</span><br><span class="line">    Exit(1)</span><br><span class="line">    ...</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>中间件编译</category>
+      </categories>
+      <tags>
+        <tag>中间件</tag>
+        <tag>源码编译</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编译安装erlang/rabbitmq</title>
+    <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85erlang-rabbitmq/</url>
+    <content><![CDATA[<h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang/Rabbitmq"></a>编译安装Erlang/Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+<p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
+<h3 id="二、编译安装Erlang"><a href="#二、编译安装Erlang" class="headerlink" title="二、编译安装Erlang"></a>二、编译安装Erlang</h3><p>erlang与rabbitmq之间存在版本依赖，具体查看<a href="https://www.rabbitmq.com/which-erlang.html#compatibility-matrix" target="_blank" rel="noopener">此处</a></p>
+<p>Erlang下载地址： <a href="https://www.erlang.org/downloads" target="_blank" rel="noopener">点此下载</a></p>
+<p><strong>编译过程：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC unixODBC-devel httpd python-simplejson</span><br><span class="line">wget http:&#x2F;&#x2F;erlang.org&#x2F;download&#x2F;otp_src_19.2.tar.gz</span><br><span class="line">tar -xzvf otp_src_19.2.tar.gz</span><br><span class="line">cd otp_src_19.2</span><br><span class="line">.&#x2F;configure  --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2 --enable-smp-support  --enable-threads  --enable-sctp --enable-kernel-poll --enable-hipe  --with-ssl --without-javac</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置环境变量：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;profile</span><br><span class="line"># 文件末尾添加以下</span><br><span class="line">export ERL_HOME&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2</span><br><span class="line">export PATH&#x3D;$PATH:$ERL_HOME&#x2F;bin</span><br><span class="line"># 重新加载配置文件</span><br><span class="line">source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure>
+
+<p><strong>验证：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">erl</span><br><span class="line"># 弹出erlang 命令列即可</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、编译安装Rabbitmq"><a href="#三、编译安装Rabbitmq" class="headerlink" title="三、编译安装Rabbitmq"></a>三、编译安装Rabbitmq</h3><p>rabbitmq源码包下载地址：<a href="https://github.com/rabbitmq/rabbitmq-server" target="_blank" rel="noopener">这里</a></p>
+<p><strong>编译过程：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -zxvf rabbitmq-server-3.9.13.tar</span><br><span class="line">cd rabbitmq-server-3.9.13</span><br><span class="line">make -j 4 &amp;&amp; make TARGET_DIR&#x3D;&#x2F;apps&#x2F;server&#x2F;rabbitmq-3.9.13 install</span><br></pre></td></tr></table></figure>
+
+<p>编译完成之后会在当前路径下看到可执行程序的目录sbin，可以删除多余文件及路径，最后保留如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rabbitmq-3.9.13</span><br><span class="line">├── deps</span><br><span class="line">├── erlang_ls.config</span><br><span class="line">├── escript</span><br><span class="line">├── plugins</span><br><span class="line">├── sbin</span><br><span class="line">└── scripts</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、Erlang-Rabbitmq编译安装过程中的问题"><a href="#四、Erlang-Rabbitmq编译安装过程中的问题" class="headerlink" title="四、Erlang/Rabbitmq编译安装过程中的问题"></a>四、Erlang/Rabbitmq编译安装过程中的问题</h3><p><strong>1、configure: error: No curses library functions found</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ncurses-devel -y</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、编译报错缺乏mix命令</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原因： 报错 &quot;找不到 mix 命令&quot; 是因为你在执行 RabbitMQ 的编译过程中缺少了 Elixir 环境，而 RabbitMQ 的一些组件可能使用了 Elixir 语言</span><br><span class="line">解决：下载编译安装elixir</span><br><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;elixir-lang&#x2F;elixir</span><br><span class="line">下载对应版本之后：</span><br><span class="line">unzip .&#x2F;elixir-1.14.2.zip</span><br><span class="line">cd .&#x2F;elixir-1.14.2</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Ps:需要注意的是编译安装的rabbitmq版本与elixir的版本之间有依赖关系，如：rabbitmq-3.9.13 版本需要elixir的版本 &gt;12 且 &lt;13</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、rsync: command not found报错</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install rsync -y</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、Your intltool is too old. You need intltool 0.x.0 or later…</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;download.gnome.org&#x2F;sources&#x2F;intltool&#x2F;</span><br><span class="line">下载解压之后进入目录</span><br><span class="line">.&#x2F;configuer </span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、在configure的时候提示XML::Parser perl module is required for intltool</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">perl -MCPAN -e shell</span><br><span class="line">#进入perl的命令行界面后安装缺少的XML::Parser模块</span><br><span class="line">install XML::Parser</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、you may need to install the CPAN module</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;metacpan.org&#x2F;dist&#x2F;CPAN</span><br><span class="line">tar -zxvf .&#x2F;CPAN-2.36.tar.gz</span><br><span class="line">cd .&#x2F;CPAN-2.36</span><br><span class="line">perl5.28.3 Makefile.PL</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>中间件编译</category>
+      </categories>
+      <tags>
+        <tag>中间件</tag>
+        <tag>源码编译</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ansible中setup模块与df命令在磁盘统计中的区别</title>
+    <url>/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，<a id="more"></a>该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
+<h3 id="二、df-命令底层原理"><a href="#二、df-命令底层原理" class="headerlink" title="二、df 命令底层原理"></a>二、df 命令底层原理</h3><p>df命令的底层调用过程依次如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev() -&gt; get_fs_usage() -&gt; statvfs_works() -&gt; statvfs()&#x2F;statfs()</span><br></pre></td></tr></table></figure>
+
+<p>其中，main() -&gt; get_entry()/get_all_entries() -&gt; get_point() -&gt; get_dev()这些函数都是在coreutils工程的df.c文件，地址： git://git.savannah.gnu.org/coreutils.git，路径：coreutils/src/df.c</p>
+<p>get_fs_usage() -&gt; statvfs_works() 是在 gnulib工程的fsusage.c文件，地址：<a href="https://github.com/coreutils/gnulib.git" target="_blank" rel="noopener">https://github.com/coreutils/gnulib.git</a> ， 路径：gnulib-master/lib/fsusage.c </p>
+<p>get_entry()如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Determine what kind of node NAME is and show the device usage</span></span><br><span class="line"><span class="comment">   for it.  STATP is the results of 'stat' on NAME.  */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">get_entry (<span class="keyword">char</span> <span class="keyword">const</span> *name, struct stat <span class="keyword">const</span> *statp)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ((S_ISBLK (statp-&gt;st_mode) || S_ISCHR (statp-&gt;st_mode))</span><br><span class="line">      &amp;&amp; get_device (name))</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  get_point (name, statp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用于获取并显示特定文件系统的磁盘空间使用信息。该函数会解析文件系统的挂载点路径，并收集有关该文件系统的磁盘空间信息，例如总大小、已用空间、可用空间等。</p>
+<p>可以看到get_entry()函数调用get_point()函数，get_point()函数如下(已省略前面判断真实挂载点的代码，有需要可以自行查看)：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">     <span class="comment">/* Find the actual mount point.  */</span></span><br><span class="line">      <span class="keyword">char</span> *mp = find_mount_point (<span class="built_in">point</span>, statp);</span><br><span class="line">      <span class="keyword">if</span> (mp)</span><br><span class="line">        &#123;</span><br><span class="line">          get_dev (<span class="literal">nullptr</span>, mp, <span class="built_in">point</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>,</span><br><span class="line">                   <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">nullptr</span>, <span class="literal">false</span>);</span><br><span class="line">          <span class="built_in">free</span> (mp);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>用于找出文件或目录挂载在哪个设备上，并显示该设备的使用情况。它首先根据给定的路径<code>point</code>计算实际的绝对路径，并使用该绝对路径在挂载点列表<code>mount_list</code>中查找匹配的挂载点。找到挂载点后，函数会调用<code>get_dev</code>函数，获取该设备的详细信息。</p>
+<p>get_dev()函数如下（已省略前面判断过滤不符合要求的文件系统的过程）：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">/* If MOUNT_POINT is null, then the file system is not mounted, and this</span></span><br><span class="line"><span class="comment">     program reports on the file system that the special file is on.</span></span><br><span class="line"><span class="comment">     It would be better to report on the unmounted file system,</span></span><br><span class="line"><span class="comment">     but statfs doesn't do that on most systems.  */</span></span><br><span class="line">  <span class="keyword">if</span> (!stat_file)</span><br><span class="line">    stat_file = mount_point ? mount_point : device;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">fs_usage</span> <span class="title">fsu</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (force_fsu)</span><br><span class="line">    fsu = *force_fsu;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (get_fs_usage (stat_file, device, &amp;fsu))</span><br><span class="line">  &#123;</span><br><span class="line">  ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数通过一系列条件判断来过滤不符合要求的文件系统信息，只处理符合条件的文件系统,最后通过调用<code>get_fs_usage</code>函数获取文件系统的使用情况，该函数还会计算文件系统的使用百分比。</p>
+<p>get_uasge()函数会通过调用statvfs_works()函数判断当前版本的linux内核是否支持statvfs()方。如果支持则会调用statvfs()方法获取磁盘的真实使用情况，如果不支持则会调用statfs()方法。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">statvfs_works (<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">int</span> statvfs_works_cache = <span class="number">-1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">utsname</span> <span class="title">name</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (statvfs_works_cache &lt; <span class="number">0</span>)</span><br><span class="line">    statvfs_works_cache = (uname (&amp;name) == <span class="number">0</span></span><br><span class="line">                           &amp;&amp; <span class="number">0</span> &lt;= strverscmp (name.<span class="built_in">release</span>, <span class="string">"2.6.36"</span>));</span><br><span class="line">  <span class="keyword">return</span> statvfs_works_cache;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>statvfs_works()函数通过获取当前内核的版本判断是否支持statvfs()方法，内核版本大于2.6.36则判断支持。</p>
+<h3 id="三、Ansible的setup模块原理"><a href="#三、Ansible的setup模块原理" class="headerlink" title="三、Ansible的setup模块原理"></a>三、Ansible的setup模块原理</h3><p>ansible内核源码地址：<a href="https://github.com/ansible/ansible.git" target="_blank" rel="noopener">https://github.com/ansible/ansible.git</a></p>
+<p>路径：ansible/lib/ansible/module_utils/facts/utils.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_mount_size</span><span class="params">(mountpoint)</span>:</span></span><br><span class="line">    mount_size = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        statvfs_result = os.statvfs(mountpoint)</span><br><span class="line">        mount_size[<span class="string">'size_total'</span>] = statvfs_result.f_frsize * statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'size_available'</span>] = statvfs_result.f_frsize * (statvfs_result.f_bavail)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Block total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'block_size'</span>] = statvfs_result.f_bsize</span><br><span class="line">        mount_size[<span class="string">'block_total'</span>] = statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'block_available'</span>] = statvfs_result.f_bavail</span><br><span class="line">        mount_size[<span class="string">'block_used'</span>] = mount_size[<span class="string">'block_total'</span>] - mount_size[<span class="string">'block_available'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Inode total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'inode_total'</span>] = statvfs_result.f_files</span><br><span class="line">        mount_size[<span class="string">'inode_available'</span>] = statvfs_result.f_favail</span><br><span class="line">        mount_size[<span class="string">'inode_used'</span>] = mount_size[<span class="string">'inode_total'</span>] - mount_size[<span class="string">'inode_available'</span>]</span><br><span class="line">    <span class="keyword">except</span> OSError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mount_size</span><br></pre></td></tr></table></figure>
+
+<p>上述为获取磁盘使用情况的代码，可以看到使用了os.ststvfs()库函数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">os.statvfs(path):</span><br><span class="line"></span><br><span class="line">Perform a statvfs() system call on the given path. The return value is an object whose attributes describe the filesystem on the given path, and correspond to the members of the statvfs structure, namely: f_bsize, f_frsize, f_blocks, f_bfree, f_bavail, f_files, f_ffree, f_favail, f_flag, f_namemax.</span><br><span class="line">返回内容说明如下：</span><br><span class="line">f_bsize: 文件系统块大小</span><br><span class="line">f_frsize: 分栈大小</span><br><span class="line">f_blocks: 文件系统数据块总数</span><br><span class="line">f_bfree: 可用块数</span><br><span class="line">f_bavail:非超级用户可获取的块数</span><br><span class="line">f_files: 文件结点总数</span><br><span class="line">f_ffree: 可用文件结点数</span><br><span class="line">f_favail: 非超级用户的可用文件结点数</span><br><span class="line">f_fsid: 文件系统标识 ID</span><br><span class="line">f_flag: 挂载标记</span><br><span class="line">f_namemax: 最大文件长度</span><br></pre></td></tr></table></figure>
+
+<p>可以看到setup模块最终调用的是statvfs()系统函数，并且可用磁盘大小、磁盘总大小等都是通过计算得来。</p>
+<h3 id="四、statfs-与statvfs"><a href="#四、statfs-与statvfs" class="headerlink" title="四、statfs()与statvfs()"></a>四、statfs()与statvfs()</h3><p>借用<a href="https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：" target="_blank" rel="noopener">https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">Q：Why do the statfs() and statvfs() calls both exist when they&#39;re so similar?Under what circumstances would I prefer one over the other?</span><br><span class="line"></span><br><span class="line">A：</span><br><span class="line">Originally 4.4BSD defined a statfs() call. Linux later implemented a slightly different call with the same name. Posix standardized it between all freenix and Unix versions by defining statvfs().</span><br><span class="line"></span><br><span class="line">statfs() is OS-specific</span><br><span class="line"></span><br><span class="line">statvfs() is posix-conforming</span><br><span class="line"></span><br><span class="line">As they all return slightly different structures, later ones to come along can&#39;t replace the first.</span><br><span class="line"></span><br><span class="line">In general you should use statvfs(), the Posix one. Be careful about &quot;use Posix&quot; advice, though, as in some cases (pty, for example) the BSD (or whatever) one is more portable in practice.</span><br></pre></td></tr></table></figure>
+
+<p>也即是说这两个函数作用相同，之所以有两个是由于历史与标准原因。最开始的4.4BSD定义的是ststfs()函数，Linux内核后来实现了一个略微有所不同，但是名字也叫这个的函数，这两个statfs()函数返回的内容的数据结构有所不同。后来Posix想要实现freenix与Unix的标准化，于是定义了ststvfs()函数。简单来说就是statfs()函数是针对系统来说的，Unix有一个，Linux也有一个；而statvfs()函数则是符合Posix规范的。</p>
+<h3 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h3><p>回到开头的问题，Ansible的setup模块与linux中的df工具，区别在于前者直接调用statvfs()系统函数，后者可能调用statfs()函数（linux内核版本低于2.6.36），也可能调用statvfs()函数（linux内核版本高于2.6.36）。</p>
+]]></content>
+      <categories>
+        <category>Ansible</category>
+      </categories>
+      <tags>
+        <tag>Ansible</tag>
+        <tag>linux</tag>
+        <tag>Devops</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>没有进程号的进程</title>
+    <url>/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，<a id="more"></a>一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
+<p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png" alt=""></p>
+<p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psef.jpeg" alt=""></p>
+<p>很明显，也没有什么发现，于是他觉得这可能是某个僵尸进程所有。由于linux系统中，如果一个进程成为僵尸进程之后，用ps命令查看时，该进程的状态栏会被标记为<strong>defunct</strong>，于是他试图用ps命令查找服务器上的僵尸进程：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psaux.png" alt=""></p>
+<p>但是很遗憾，还是没有什么发现，甚至通过*<em>lsof -i:port *</em>命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/telnet.png" alt=""></p>
+<p>端口是通的，说明有后台是有一个正常进程在处理它，所以小L开始慌张了，他下一步想确认到底是不是某些不知名人物所为。如果是不知名人物所为，那大概了会有网络连接的，所以小L用了ss命令：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/ss.png" alt=""></p>
+<p>还好，通过20090端口只有一个处于ESTAB状态的连接，这是他自己telnet的结果，他稍稍心安。但是这个进程到底是谁建立的呢？小L同学走投无路之下，只好尝试笨办法–直接全局搜索端口号：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/grep.png" alt=""></p>
+<p>还真让他找出来了一些东西，但是很遗憾，这并不是他要的结果，只是服务器上部署的普罗米修斯程序的日志里面有数据刚好匹配上了20090这个字符串。小L同学继续在网络的海洋里游啊游，还真让他找到了一些东西。</p>
+<p><strong>rpcinfo</strong>工具可以显示所有使用<strong>portmap</strong>注册的程序的信息。rpcinfo -p x.x.x.x 可以基于rpc协议访问服务器，通过服务器返回的响应信息探测主机x.x.x.x上已经注册的rpc服务的信息。</p>
+<p><strong>portmap</strong> 是一个rpc端口映射程序，最初由 Sun 公司开发，它可以将 rpc 程序号映射到网络上的端口号。rpc进程在启动时通知 portmap，显示它们正在监视的端口号以及它们提供服务的 rpc 程序号，然后客户端系统使用特定的 rpc 程序编号联系服务器上的端口映射服务（portmap），然后 portmap 再将客户端重定向到正确的端口号以与其预期的服务进行通信。</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/rpcinfo.png" alt=""></p>
+<p>可以看到，让小L同学备受困扰的20090端口赫然在列！但是这个<strong>nlockmgr</strong>服务是个什么呢？</p>
+<p>nlockmgr是在NFS中用来管理文件的锁定的，防止多个客户端同时写入某个文件是产生冲突。</p>
+<p>NFS服务需要开启 mountd,nfs,nlockmgr,portmapper,rquotad这5个服务，其中nfs、portmapper的端口是固定的，另外三个服务的端口是随机分配的，也可以给mountd,nlockmgr,rquotad设置固定的端口。具体方法很简单，也不再赘述，问问神奇的搜索引擎吧。</p>
+]]></content>
+      <categories>
+        <category>运维经验</category>
+        <category>linux命令</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>运维经验</tag>
+        <tag>linux命令</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Jmeter基本使用与常见性能瓶颈</title>
+    <url>/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h2 id="Jmeter基本使用与常见性能瓶颈"><a href="#Jmeter基本使用与常见性能瓶颈" class="headerlink" title="Jmeter基本使用与常见性能瓶颈"></a>Jmeter基本使用与常见性能瓶颈</h2><h3 id="一、什么是Jmeter"><a href="#一、什么是Jmeter" class="headerlink" title="一、什么是Jmeter"></a>一、什么是Jmeter</h3><p><a href="https://jmeter.apache.org/" target="_blank" rel="noopener">官网链接</a></p>
+<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/小服务程序/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，<a id="more"></a>在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能/<a href="https://baike.baidu.com/item/回归测试/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/使用正则表达式/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
+<h3 id="二、Jmeter中的相关概念"><a href="#二、Jmeter中的相关概念" class="headerlink" title="二、Jmeter中的相关概念"></a>二、Jmeter中的相关概念</h3><ol>
+<li>线程：一个线程可以理解为一个虚拟用户。比如10个线程表示有10个用户不间断发起请求，也可以理解为<strong>并发数</strong></li>
+<li>线程组：测试的起点。一个测试计划必须包含至少一个线程组，其余所有组件都必须在线程组下</li>
+<li>监听器：用来查看测试过程中的各项指标</li>
+<li>取样器（Sample）是性能测试中向服务器发送请求，记录响应信息，记录响应时间的最小单元。JMeter 原生支持多种不同的sampler ，如 HTTP Request Sampler 、 FTP  Request Sample 、TCP  Request Sample 、JDBC Request Sampler 等，每一种不同类型的 sampler 可以根据设置的参数向服务器发出不同类型的请求。（<strong>实际上就是配置请求地址和请求参数的地方</strong>）</li>
+<li>定时器（Timer）用于操作之间设置等待时间，等待时间是性能测试中常用的控制客户端QPS的手端。类似于LoadRunner里面的“思考时间”。JMeter 定义了Bean Shell Timer、Constant Throughput Timer、固定定时器等不同类型的Timer。</li>
+</ol>
+<h3 id="三、压力测试过程"><a href="#三、压力测试过程" class="headerlink" title="三、压力测试过程"></a>三、压力测试过程</h3><p>本小节以单一请求为例，描述压力测试设置请求参数、查看测试结果的过程</p>
+<ol>
+<li>从官网下载jmeter，解压缩</li>
+<li>Windows下打开bin/jmeter.cmd</li>
+<li>新建测试计划与线程组。打开后默认已建立一个测试计划，右击测试计划根据需要新建线程组，一般选择“setUp Thread Group（常规线程组）”或“Stepping Thread Group（阶梯测试线程组）”</li>
+<li>右击线程组根据需要新建取样器（设置请求参数的地方），一般我们是新建HTTP Request</li>
+<li>右击线程组，根据需要查看的指标新建监听器，一般结果树（view Result Tree）和聚合报告（Summary Report）是必需的，前者可以看到jmeter发出的每个请求的响应情况，后者可以在生成实时汇总报告</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/f5c9c5f794cc49c99c8aff44b562b334.png#pic_center" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#线程组参数说明</span><br><span class="line">- 线程数： 同时发起的请求数。如线程数为10表示用10个线程模拟10个用户发起请求</span><br><span class="line">- Ramp-Up时间： 多长时间内启动完全部线程</span><br><span class="line">- 循环次数：每个线程循环请求的次数，设置为永远则所有线程持续不间断请求</span><br><span class="line">- 持续时间： 测试请求的时间</span><br><span class="line">- 启动延迟： 单一脚本时用不上。此参数表示当有多个jmeter脚本时，间隔多长时间启动下一脚本</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li><p>因为jmeter图形化界面本身会占用一定资源，为了最大化资源利用效率，jmeter官方也推荐在命令行下进行压力测试，而仅在图形界面设置参数与查看最终结果，因此以上设置完成之后需要保存为jmx文件</p>
+</li>
+<li><p>将jmx文件与jmeter压缩包一起上传到linux服务器或其他有命令行的地方，执行以下命令开始压测</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">jmeter -n -t .&#x2F;xxx.jmx -l ..&#x2F;xxx.jtl -e -o ..&#x2F;xxx</span><br><span class="line">#参数说明：</span><br><span class="line">- -n 表示以命令行执行脚本</span><br><span class="line">- -t 指明测试脚本文件的位置（测试脚本文件为jmx文件）</span><br><span class="line">- -l 指明测试结果保存的位置（测试结果文件为jtl文件）</span><br><span class="line">- -e -o 表示同时生成网页报告以及网页文件存放的目录，该目录应为空或不存在</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将测试结果文件（jtl文件）拿出来，导入到jmeter图形界面中，查看测试结果；或将网页文件拿出来在网页上查看测试结果</p>
+</li>
+</ol>
+<h3 id="四、测试结果查看"><a href="#四、测试结果查看" class="headerlink" title="四、测试结果查看"></a>四、测试结果查看</h3><ol>
+<li>测试过程中的实时查看：</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/3c8cad8b6b23484da23f3cb1e4f2d978.png#pic_center" alt=""></p>
+<p>在命令行执行脚本测试过程中，会看到以上页面。</p>
+<ul>
+<li>“summary +”表示测试过程中的变化量，“summary =”所在的行才是我们需要关注的测试结果，其后跟的数字代表发送请求的数量</li>
+<li>in 后面跟的是时间</li>
+<li>= 后面跟的是吞吐量，可以近似看作QPS、TPS</li>
+<li>Avg、Min、Max 表示请求响应的平均时间、最小时间、最大时间</li>
+<li>Err 后面跟的是错误请求的数量与百分比</li>
+<li>Active、Started、Finished表示线程数</li>
+</ul>
+<p>如前三行可以解读为：</p>
+<ul>
+<li>在前23秒的时候发起了767次请求，TPS为33.3/s，平均响应时间为5724ms，最小响应时间为142ms，最大响应时间为22562ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
+<li>在其后的30s內，共发起1212次请求，这30s內TPS为40.4/s，平均响应时间为12531ms，最小响应时间为394ms，最大响应时间为49573ms，此过程中共有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
+<li>总结以上，在前53s时间内，共发起1979次请求，TPS为37.3，平均响应时间为9893ms，最小响应时间为142ms，最大响应时间为49573ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
+</ul>
+<ol start="2">
+<li><p>测试结束后将结果文件（jtl文件）导入到jmeter图形界面：</p>
+<p>结果树：<br><img src="https://img-blog.csdnimg.cn/fb7549fb276b40f28d6b786687f7d759.png#pic_center" alt=""></p>
+<p>结果树可以看到每个请求的响应情况</p>
+<p>聚合报告：</p>
+<p><img src="https://img-blog.csdnimg.cn/c589751702a7418f80f306053020509d.png#pic_center" alt=""></p>
+<p>聚合报告可以看到发起的总请求数、平均响应时间、响应时间的中位数、90%的请求在多长时间内完成响应、95%的请求在多长时间内完成响应、99%的请求在多长时间内完成响应、响应时间的最大值、响应时间的最小值、异常请求所占的比例、吞吐量（TPS）以及发送、接受数据的速度</p>
+</li>
+</ol>
+<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ol>
+<li><p>如果调整参数每次都在图形界面进行，对于我们在命令行进行测试十分不方便，我们可以直接修改jmx文件实现参数调整，如果线程组使用的是“setUp Thread Group”，那么可以在jmx文件中全局搜索“setUp”关键字，找到以下内容修改：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;SetupThreadGroup guiclass&#x3D;&quot;SetupThreadGroupGui&quot; testclass&#x3D;&quot;SetupThreadGroup&quot; testname&#x3D;&quot;setUp Thread Group&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.on_sample_error&quot;&gt;continue&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;elementProp name&#x3D;&quot;ThreadGroup.main_controller&quot; elementType&#x3D;&quot;LoopController&quot; guiclass&#x3D;&quot;LoopControlPanel&quot; testclass&#x3D;&quot;LoopController&quot; testname&#x3D;&quot;Loop Controller&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;LoopController.continue_forever&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;intProp name&#x3D;&quot;LoopController.loops&quot;&gt;-1&lt;&#x2F;intProp&gt;</span><br><span class="line">        &lt;&#x2F;elementProp&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.num_threads&quot;&gt;200&lt;&#x2F;stringProp&gt;        &lt;!--线程数--&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.ramp_time&quot;&gt;1&lt;&#x2F;stringProp&gt;            &lt;!--多长时间内启动所有线程--&gt;</span><br><span class="line">        &lt;boolProp name&#x3D;&quot;ThreadGroup.scheduler&quot;&gt;true&lt;&#x2F;boolProp&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.duration&quot;&gt;120&lt;&#x2F;stringProp&gt;           &lt;!--测试持续时间--&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.delay&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;boolProp name&#x3D;&quot;ThreadGroup.same_user_on_next_iteration&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">      &lt;&#x2F;SetupThreadGroup&gt;</span><br></pre></td></tr></table></figure>
+
+   <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;HTTPSamplerProxy guiclass&#x3D;&quot;HttpTestSampleGui&quot; testclass&#x3D;&quot;HTTPSamplerProxy&quot; testname&#x3D;&quot;HTTP Request&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;elementProp name&#x3D;&quot;HTTPsampler.Arguments&quot; elementType&#x3D;&quot;Arguments&quot; guiclass&#x3D;&quot;HTTPArgumentsPanel&quot; testclass&#x3D;&quot;Arguments&quot; testname&#x3D;&quot;User Defined Variables&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">            &lt;collectionProp name&#x3D;&quot;Arguments.arguments&quot;&#x2F;&gt;</span><br><span class="line">          &lt;&#x2F;elementProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.domain&quot;&gt;x.x.x.x&lt;&#x2F;stringProp&gt;        &lt;!--请求地址--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.port&quot;&gt;xxxx&lt;&#x2F;stringProp&gt;                &lt;!--请求端口--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.protocol&quot;&gt;http&lt;&#x2F;stringProp&gt;            &lt;!--请求协议--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.contentEncoding&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.path&quot;&gt;&#x2F;xxxx&lt;&#x2F;stringProp&gt;             &lt;!--请求路径--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.method&quot;&gt;GET&lt;&#x2F;stringProp&gt;                 &lt;!--请求方式--&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.follow_redirects&quot;&gt;true&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.auto_redirects&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.use_keepalive&quot;&gt;true&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.DO_MULTIPART_POST&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.embedded_url_re&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.connect_timeout&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.response_timeout&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;HTTPSamplerProxy&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果需要测试存储服务或其他下载服务，可以选中当前线程组，右键添加后置处理程序-》BeanShell PostProcessor，加入以下脚本：</p>
+ <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();</span><br></pre></td></tr></table></figure>
+
+<p>或直接在jmx文件中与”ResultCollector“平级的层加入：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;BeanShellPostProcessor guiclass&#x3D;&quot;TestBeanGUI&quot; testclass&#x3D;&quot;BeanShellPostProcessor&quot; testname&#x3D;&quot;BeanShell PostProcessor&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;filename&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;parameters&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;resetInterpreter&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;script&quot;&gt;import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;BeanShellPostProcessor&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="五、常见的性能瓶颈"><a href="#五、常见的性能瓶颈" class="headerlink" title="五、常见的性能瓶颈"></a>五、常见的性能瓶颈</h3><ul>
+<li>网络带宽（尤其是压测请求的请求体或响应体较大的时候尤为明显）</li>
+<li>磁盘IO（与之相关的是nginx、程序的日志级别）</li>
+<li>JVM参数</li>
+<li>网络参数（/etc/ sysctl.conf）</li>
+</ul>
+]]></content>
+      <categories>
+        <category>运维工具</category>
+      </categories>
+      <tags>
+        <tag>jmeter</tag>
+        <tag>运维工具</tag>
+        <tag>压力测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>程序中的数据类型转换</title>
+    <url>/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<h3 id="基本内置类型"><a href="#基本内置类型" class="headerlink" title="基本内置类型"></a>基本内置类型</h3><ul>
+<li>short</li>
+<li>int</li>
+<li>long</li>
+<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
+<li>float</li>
+<li>double</li>
+<li>long double</li>
+<li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
+<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
+<li>bool</li>
+</ul>
+<h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
+<li>明确知晓数值不可能为负数时，选用无符号类型<a id="more"></a></li>
+<li>使用int执行整数运算（short太小，long跟int 一样；若整数超出int表示范围，选long long）</li>
+<li>在算术表达式中不要使用 char 或 bool，只有在存放字符或布尔值时才使用它们。因为类型 char在一些机器上是有符号的，而在另一些机器上又是无符号的， 所以如果使用 char 进行运算特别容易出问题。如果需要使用一个不大的整数， 那么明确指定它的类型是 Signed char 或者 uns igned char</li>
+<li>执行浮点数运算选用 double，这是因为 float 通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double 提供的精度在一般情况下是没有必要的， 沉且它带来的运行时消耗也不容忽视</li>
+</ul>
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
+<li>当我们把一个非布尔类型的算术值赋给布尔类型时，初始值为0则结果为 false, 否则结果为 true</li>
+<li>当我们把一个布尔值赋给非布尔类型时，初始值为 false则结果为0，初始值为 true 则结果为1</li>
+<li>当我们把一个浮点数赋给整数类型时，进行了近似处理。结果值将仅保留浮点数中小数点之前的部分</li>
+<li>当我们把一个整数值赋给浮点类型时，小数部分记为0。如果该整数所占的空间超过了浮点类型的容量，精度可能有损失</li>
+<li>当我们赋给无符号类型一个超出它表示范围的值时，结果是初始值对无符号类型表示数值总数取模后的余数。例如，8比特大小的 unsigned char 可以表示0至 255 区间内的值，如果我们赋了一个区间以外的值，则实际的结果是该值对 256 取模后所得的余数。因此，把-1赋给＆比特大小的 unsigned char 所得的结果是255</li>
+<li>当我们赋给带符号类型一个超出它表示范围的值时，结果是末定义的(undefined)。此时，程序可能继续工作、可能崩溃，也可能生成垃圾数据</li>
+</ul>
+<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ul>
+<li>当一个算数表达式中既有无符号数又有int值时，那么int值就会转换成无符号数。int型转无符号数的过程与把int值直接赋给无符号变量一样：把负数转换为无符号数类似于直接给无符号数赋一个负值，结果等于这个负数加上无符号数的模</li>
+<li>无符号数永远不小于0，无符号数用于循环中需注意</li>
+</ul>
+]]></content>
+      <categories>
+        <category>C++基础</category>
+      </categories>
+      <tags>
+        <tag>C++基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C++基础-main函数返回值问题</title>
     <url>/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：<a id="more"></a></p>
@@ -103,31 +404,6 @@
       </tags>
   </entry>
   <entry>
-    <title>编译安装MongoDB（含gcc环境）</title>
-    <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/</url>
-    <content><![CDATA[<h2 id="编译安装MongoDB（含gcc环境）"><a href="#编译安装MongoDB（含gcc环境）" class="headerlink" title="编译安装MongoDB（含gcc环境）"></a>编译安装MongoDB（含gcc环境）</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
-<p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
-<h3 id="二、编译安装MongoDB"><a href="#二、编译安装MongoDB" class="headerlink" title="二、编译安装MongoDB"></a>二、编译安装MongoDB</h3><p>mongoDB源码下载地址：<a href="https://www.mongodb.com/try/download/community-kubernetes-operator" target="_blank" rel="noopener">https://www.mongodb.com/try/download/community-kubernetes-operator</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#安装编译依赖</span><br><span class="line">yum install pcre-devel python-devel python3-devel openssl-*  liblzma-dev xz-devel yum install libcurl*</span><br><span class="line"># 安装pip3</span><br><span class="line">python3 -m pip install pip-23.2.1-py3-none-any.whl</span><br><span class="line">#安装scon</span><br><span class="line">下载地址：https:&#x2F;&#x2F;scons.org&#x2F;pages&#x2F;download.html</span><br><span class="line">解压之后进入目录：python3 setup.py install</span><br><span class="line">验证：scons -h</span><br><span class="line">#编译安装mongo，需要很多空间（可用空间大于20G左右最好），以及很长时间（几小时）</span><br><span class="line">tar -zxvf .&#x2F;mongodb-src-r4.4.24-rc0.tar.gz</span><br><span class="line">cd .&#x2F;mongodb-src-r4.4.24-rc0</span><br><span class="line">pip3 install -r .&#x2F;buildscripts&#x2F;requirements.txt</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons &amp;&amp; &#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons PREFIX&#x3D;&#x2F;apps&#x2F;server&#x2F;mongo  install</span><br><span class="line">#上述编译出来的可执行程序太大，因为里面包含了调试信息，需要去掉</span><br><span class="line">cd .&#x2F;bin</span><br><span class="line">strip mongo mongod mongos</span><br><span class="line"></span><br><span class="line">编译完毕！！（含泪洒下一把血泪 5555）</span><br></pre></td></tr></table></figure>
-
-<h3 id="三、升级gcc环境"><a href="#三、升级gcc环境" class="headerlink" title="三、升级gcc环境"></a>三、升级gcc环境</h3><p>如果在上述编译过程中报错需要更高版本的gcc环境，可按照以下步骤升级</p>
-<p>gcc源码包镜像下载站：<a href="http://ftp.tsukuba.wide.ad.jp/software/gcc/" target="_blank" rel="noopener">http://ftp.tsukuba.wide.ad.jp/software/gcc/</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -xvf gcc-5.3.0.tar.gz</span><br><span class="line">cd gcc-5.3.0</span><br><span class="line">yum -y install bzip2 wget git</span><br><span class="line">.&#x2F;contrib&#x2F;download_prerequisites</span><br><span class="line">cd ..&#x2F; &amp;&amp; mkdir gcc-build-5.3.0 &amp;&amp; cd gcc-build-5.3.0</span><br><span class="line">..&#x2F;gcc-5.3.0&#x2F;configure --enable-checking&#x3D;release --enable-languages&#x3D;c,c++ --disable-multilib</span><br><span class="line">make &amp;&amp; make install   # 需要等很久</span><br><span class="line"># 新建远程连接后gcc -version验证</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="四、编译安装过程中的问题"><a href="#四、编译安装过程中的问题" class="headerlink" title="四、编译安装过程中的问题"></a>四、编译安装过程中的问题</h3><p><strong>1、./contrib/download_prerequisites过程中报错校验不通过</strong></p>
-<p>重新执行脚本下载即可</p>
-]]></content>
-      <categories>
-        <category>中间件编译</category>
-      </categories>
-      <tags>
-        <tag>中间件</tag>
-        <tag>源码编译</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>About</title>
     <url>/2020/07/24/About/</url>
     <content><![CDATA[<h2 id="About"><a href="#About" class="headerlink" title="About"></a>About</h2><p>  ——初来乍到，请多关照（^_^）—–</p>
@@ -145,269 +421,6 @@
       </categories>
       <tags>
         <tag>about</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>编译安装erlang/rabbitmq</title>
-    <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85erlang-rabbitmq/</url>
-    <content><![CDATA[<h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang/Rabbitmq"></a>编译安装Erlang/Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
-<p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
-<h3 id="二、编译安装Erlang"><a href="#二、编译安装Erlang" class="headerlink" title="二、编译安装Erlang"></a>二、编译安装Erlang</h3><p>erlang与rabbitmq之间存在版本依赖，具体查看<a href="https://www.rabbitmq.com/which-erlang.html#compatibility-matrix" target="_blank" rel="noopener">此处</a></p>
-<p>Erlang下载地址： <a href="https://www.erlang.org/downloads" target="_blank" rel="noopener">点此下载</a></p>
-<p><strong>编译过程：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum -y install makegcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC unixODBC-devel httpd python-simplejson</span><br><span class="line">wget http:&#x2F;&#x2F;erlang.org&#x2F;download&#x2F;otp_src_19.2.tar.gz</span><br><span class="line">tar -xzvf otp_src_19.2.tar.gz</span><br><span class="line">cd otp_src_19.2</span><br><span class="line">.&#x2F;configure  --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2 --enable-smp-support  --enable-threads  --enable-sctp --enable-kernel-poll --enable-hipe  --with-ssl --without-javac</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-
-<p><strong>配置环境变量：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;profile</span><br><span class="line"># 文件末尾添加以下</span><br><span class="line">export ERL_HOME&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2</span><br><span class="line">export PATH&#x3D;$PATH:$ERL_HOME&#x2F;bin</span><br><span class="line"># 重新加载配置文件</span><br><span class="line">source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure>
-
-<p><strong>验证：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">erl</span><br><span class="line"># 弹出erlang 命令列即可</span><br></pre></td></tr></table></figure>
-
-<h3 id="三、编译安装Rabbitmq"><a href="#三、编译安装Rabbitmq" class="headerlink" title="三、编译安装Rabbitmq"></a>三、编译安装Rabbitmq</h3><p>rabbitmq源码包下载地址：<a href="https://github.com/rabbitmq/rabbitmq-server" target="_blank" rel="noopener">这里</a></p>
-<p><strong>编译过程：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -zxvf rabbitmq-server-3.9.13.tar</span><br><span class="line">cd rabbitmq-server-3.9.13</span><br><span class="line">make -j 4 &amp;&amp; make TARGET_DIR&#x3D;&#x2F;apps&#x2F;server&#x2F;rabbitmq-3.9.13 install</span><br></pre></td></tr></table></figure>
-
-<p>编译完成之后会在当前路径下看到可执行程序的目录sbin，可以删除多余文件及路径，最后保留如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rabbitmq-3.9.13</span><br><span class="line">├── deps</span><br><span class="line">├── erlang_ls.config</span><br><span class="line">├── escript</span><br><span class="line">├── plugins</span><br><span class="line">├── sbin</span><br><span class="line">└── scripts</span><br></pre></td></tr></table></figure>
-
-<h3 id="四、Erlang-Rabbitmq编译安装过程中的问题"><a href="#四、Erlang-Rabbitmq编译安装过程中的问题" class="headerlink" title="四、Erlang/Rabbitmq编译安装过程中的问题"></a>四、Erlang/Rabbitmq编译安装过程中的问题</h3><p><strong>1、configure: error: No curses library functions found</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ncurses-devel -y</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、编译报错缺乏mix命令</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原因： 报错 &quot;找不到 mix 命令&quot; 是因为你在执行 RabbitMQ 的编译过程中缺少了 Elixir 环境，而 RabbitMQ 的一些组件可能使用了 Elixir 语言</span><br><span class="line">解决：下载编译安装elixir</span><br><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;elixir-lang&#x2F;elixir</span><br><span class="line">下载对应版本之后：</span><br><span class="line">unzip .&#x2F;elixir-1.14.2.zip</span><br><span class="line">cd .&#x2F;elixir-1.14.2</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Ps:需要注意的是编译安装的rabbitmq版本与elixir的版本之间有依赖关系，如：rabbitmq-3.9.13 版本需要elixir的版本 &gt;12 且 &lt;13</span><br></pre></td></tr></table></figure>
-
-<p><strong>3、rsync: command not found报错</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install rsync -y</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、Your intltool is too old. You need intltool 0.x.0 or later…</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;download.gnome.org&#x2F;sources&#x2F;intltool&#x2F;</span><br><span class="line">下载解压之后进入目录</span><br><span class="line">.&#x2F;configuer </span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、在configure的时候提示XML::Parser perl module is required for intltool</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">perl -MCPAN -e shell</span><br><span class="line">#进入perl的命令行界面后安装缺少的XML::Parser模块</span><br><span class="line">install XML::Parser</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、you may need to install the CPAN module</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;metacpan.org&#x2F;dist&#x2F;CPAN</span><br><span class="line">tar -zxvf .&#x2F;CPAN-2.36.tar.gz</span><br><span class="line">cd .&#x2F;CPAN-2.36</span><br><span class="line">perl5.28.3 Makefile.PL</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>中间件编译</category>
-      </categories>
-      <tags>
-        <tag>中间件</tag>
-        <tag>源码编译</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>程序中的数据类型转换</title>
-    <url>/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
-    <content><![CDATA[<h3 id="基本内置类型"><a href="#基本内置类型" class="headerlink" title="基本内置类型"></a>基本内置类型</h3><ul>
-<li>short</li>
-<li>int</li>
-<li>long</li>
-<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
-<li>float</li>
-<li>double</li>
-<li>long double</li>
-<li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
-<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
-<li>bool</li>
-</ul>
-<h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
-<li>明确知晓数值不可能为负数时，选用无符号类型<a id="more"></a></li>
-<li>使用int执行整数运算（short太小，long跟int 一样；若整数超出int表示范围，选long long）</li>
-<li>在算术表达式中不要使用 char 或 bool，只有在存放字符或布尔值时才使用它们。因为类型 char在一些机器上是有符号的，而在另一些机器上又是无符号的， 所以如果使用 char 进行运算特别容易出问题。如果需要使用一个不大的整数， 那么明确指定它的类型是 Signed char 或者 uns igned char</li>
-<li>执行浮点数运算选用 double，这是因为 float 通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double 提供的精度在一般情况下是没有必要的， 沉且它带来的运行时消耗也不容忽视</li>
-</ul>
-<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><ul>
-<li>当我们把一个非布尔类型的算术值赋给布尔类型时，初始值为0则结果为 false, 否则结果为 true</li>
-<li>当我们把一个布尔值赋给非布尔类型时，初始值为 false则结果为0，初始值为 true 则结果为1</li>
-<li>当我们把一个浮点数赋给整数类型时，进行了近似处理。结果值将仅保留浮点数中小数点之前的部分</li>
-<li>当我们把一个整数值赋给浮点类型时，小数部分记为0。如果该整数所占的空间超过了浮点类型的容量，精度可能有损失</li>
-<li>当我们赋给无符号类型一个超出它表示范围的值时，结果是初始值对无符号类型表示数值总数取模后的余数。例如，8比特大小的 unsigned char 可以表示0至 255 区间内的值，如果我们赋了一个区间以外的值，则实际的结果是该值对 256 取模后所得的余数。因此，把-1赋给＆比特大小的 unsigned char 所得的结果是255</li>
-<li>当我们赋给带符号类型一个超出它表示范围的值时，结果是末定义的(undefined)。此时，程序可能继续工作、可能崩溃，也可能生成垃圾数据</li>
-</ul>
-<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ul>
-<li>当一个算数表达式中既有无符号数又有int值时，那么int值就会转换成无符号数。int型转无符号数的过程与把int值直接赋给无符号变量一样：把负数转换为无符号数类似于直接给无符号数赋一个负值，结果等于这个负数加上无符号数的模</li>
-<li>无符号数永远不小于0，无符号数用于循环中需注意</li>
-</ul>
-]]></content>
-      <categories>
-        <category>C++基础</category>
-      </categories>
-      <tags>
-        <tag>C++基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ansible中setup模块与df命令在磁盘统计中的区别</title>
-    <url>/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，<a id="more"></a>该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
-<h3 id="二、df-命令底层原理"><a href="#二、df-命令底层原理" class="headerlink" title="二、df 命令底层原理"></a>二、df 命令底层原理</h3><p>df命令的底层调用过程依次如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev() -&gt; get_fs_usage() -&gt; statvfs_works() -&gt; statvfs()&#x2F;statfs()</span><br></pre></td></tr></table></figure>
-
-<p>其中，main() -&gt; get_entry()/get_all_entries() -&gt; get_point() -&gt; get_dev()这些函数都是在coreutils工程的df.c文件，地址： git://git.savannah.gnu.org/coreutils.git，路径：coreutils/src/df.c</p>
-<p>get_fs_usage() -&gt; statvfs_works() 是在 gnulib工程的fsusage.c文件，地址：<a href="https://github.com/coreutils/gnulib.git" target="_blank" rel="noopener">https://github.com/coreutils/gnulib.git</a> ， 路径：gnulib-master/lib/fsusage.c </p>
-<p>get_entry()如下：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Determine what kind of node NAME is and show the device usage</span></span><br><span class="line"><span class="comment">   for it.  STATP is the results of 'stat' on NAME.  */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">get_entry (<span class="keyword">char</span> <span class="keyword">const</span> *name, struct stat <span class="keyword">const</span> *statp)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ((S_ISBLK (statp-&gt;st_mode) || S_ISCHR (statp-&gt;st_mode))</span><br><span class="line">      &amp;&amp; get_device (name))</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  get_point (name, statp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>用于获取并显示特定文件系统的磁盘空间使用信息。该函数会解析文件系统的挂载点路径，并收集有关该文件系统的磁盘空间信息，例如总大小、已用空间、可用空间等。</p>
-<p>可以看到get_entry()函数调用get_point()函数，get_point()函数如下(已省略前面判断真实挂载点的代码，有需要可以自行查看)：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">     <span class="comment">/* Find the actual mount point.  */</span></span><br><span class="line">      <span class="keyword">char</span> *mp = find_mount_point (<span class="built_in">point</span>, statp);</span><br><span class="line">      <span class="keyword">if</span> (mp)</span><br><span class="line">        &#123;</span><br><span class="line">          get_dev (<span class="literal">nullptr</span>, mp, <span class="built_in">point</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>,</span><br><span class="line">                   <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">nullptr</span>, <span class="literal">false</span>);</span><br><span class="line">          <span class="built_in">free</span> (mp);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-
-<p>用于找出文件或目录挂载在哪个设备上，并显示该设备的使用情况。它首先根据给定的路径<code>point</code>计算实际的绝对路径，并使用该绝对路径在挂载点列表<code>mount_list</code>中查找匹配的挂载点。找到挂载点后，函数会调用<code>get_dev</code>函数，获取该设备的详细信息。</p>
-<p>get_dev()函数如下（已省略前面判断过滤不符合要求的文件系统的过程）：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment">/* If MOUNT_POINT is null, then the file system is not mounted, and this</span></span><br><span class="line"><span class="comment">     program reports on the file system that the special file is on.</span></span><br><span class="line"><span class="comment">     It would be better to report on the unmounted file system,</span></span><br><span class="line"><span class="comment">     but statfs doesn't do that on most systems.  */</span></span><br><span class="line">  <span class="keyword">if</span> (!stat_file)</span><br><span class="line">    stat_file = mount_point ? mount_point : device;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">fs_usage</span> <span class="title">fsu</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (force_fsu)</span><br><span class="line">    fsu = *force_fsu;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (get_fs_usage (stat_file, device, &amp;fsu))</span><br><span class="line">  &#123;</span><br><span class="line">  ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<p>函数通过一系列条件判断来过滤不符合要求的文件系统信息，只处理符合条件的文件系统,最后通过调用<code>get_fs_usage</code>函数获取文件系统的使用情况，该函数还会计算文件系统的使用百分比。</p>
-<p>get_uasge()函数会通过调用statvfs_works()函数判断当前版本的linux内核是否支持statvfs()方。如果支持则会调用statvfs()方法获取磁盘的真实使用情况，如果不支持则会调用statfs()方法。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">statvfs_works (<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">int</span> statvfs_works_cache = <span class="number">-1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">utsname</span> <span class="title">name</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (statvfs_works_cache &lt; <span class="number">0</span>)</span><br><span class="line">    statvfs_works_cache = (uname (&amp;name) == <span class="number">0</span></span><br><span class="line">                           &amp;&amp; <span class="number">0</span> &lt;= strverscmp (name.<span class="built_in">release</span>, <span class="string">"2.6.36"</span>));</span><br><span class="line">  <span class="keyword">return</span> statvfs_works_cache;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>statvfs_works()函数通过获取当前内核的版本判断是否支持statvfs()方法，内核版本大于2.6.36则判断支持。</p>
-<h3 id="三、Ansible的setup模块原理"><a href="#三、Ansible的setup模块原理" class="headerlink" title="三、Ansible的setup模块原理"></a>三、Ansible的setup模块原理</h3><p>ansible内核源码地址：<a href="https://github.com/ansible/ansible.git" target="_blank" rel="noopener">https://github.com/ansible/ansible.git</a></p>
-<p>路径：ansible/lib/ansible/module_utils/facts/utils.py</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_mount_size</span><span class="params">(mountpoint)</span>:</span></span><br><span class="line">    mount_size = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        statvfs_result = os.statvfs(mountpoint)</span><br><span class="line">        mount_size[<span class="string">'size_total'</span>] = statvfs_result.f_frsize * statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'size_available'</span>] = statvfs_result.f_frsize * (statvfs_result.f_bavail)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Block total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'block_size'</span>] = statvfs_result.f_bsize</span><br><span class="line">        mount_size[<span class="string">'block_total'</span>] = statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'block_available'</span>] = statvfs_result.f_bavail</span><br><span class="line">        mount_size[<span class="string">'block_used'</span>] = mount_size[<span class="string">'block_total'</span>] - mount_size[<span class="string">'block_available'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Inode total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'inode_total'</span>] = statvfs_result.f_files</span><br><span class="line">        mount_size[<span class="string">'inode_available'</span>] = statvfs_result.f_favail</span><br><span class="line">        mount_size[<span class="string">'inode_used'</span>] = mount_size[<span class="string">'inode_total'</span>] - mount_size[<span class="string">'inode_available'</span>]</span><br><span class="line">    <span class="keyword">except</span> OSError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mount_size</span><br></pre></td></tr></table></figure>
-
-<p>上述为获取磁盘使用情况的代码，可以看到使用了os.ststvfs()库函数</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">os.statvfs(path):</span><br><span class="line"></span><br><span class="line">Perform a statvfs() system call on the given path. The return value is an object whose attributes describe the filesystem on the given path, and correspond to the members of the statvfs structure, namely: f_bsize, f_frsize, f_blocks, f_bfree, f_bavail, f_files, f_ffree, f_favail, f_flag, f_namemax.</span><br><span class="line">返回内容说明如下：</span><br><span class="line">f_bsize: 文件系统块大小</span><br><span class="line">f_frsize: 分栈大小</span><br><span class="line">f_blocks: 文件系统数据块总数</span><br><span class="line">f_bfree: 可用块数</span><br><span class="line">f_bavail:非超级用户可获取的块数</span><br><span class="line">f_files: 文件结点总数</span><br><span class="line">f_ffree: 可用文件结点数</span><br><span class="line">f_favail: 非超级用户的可用文件结点数</span><br><span class="line">f_fsid: 文件系统标识 ID</span><br><span class="line">f_flag: 挂载标记</span><br><span class="line">f_namemax: 最大文件长度</span><br></pre></td></tr></table></figure>
-
-<p>可以看到setup模块最终调用的是statvfs()系统函数，并且可用磁盘大小、磁盘总大小等都是通过计算得来。</p>
-<h3 id="四、statfs-与statvfs"><a href="#四、statfs-与statvfs" class="headerlink" title="四、statfs()与statvfs()"></a>四、statfs()与statvfs()</h3><p>借用<a href="https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：" target="_blank" rel="noopener">https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">Q：Why do the statfs() and statvfs() calls both exist when they&#39;re so similar?Under what circumstances would I prefer one over the other?</span><br><span class="line"></span><br><span class="line">A：</span><br><span class="line">Originally 4.4BSD defined a statfs() call. Linux later implemented a slightly different call with the same name. Posix standardized it between all freenix and Unix versions by defining statvfs().</span><br><span class="line"></span><br><span class="line">statfs() is OS-specific</span><br><span class="line"></span><br><span class="line">statvfs() is posix-conforming</span><br><span class="line"></span><br><span class="line">As they all return slightly different structures, later ones to come along can&#39;t replace the first.</span><br><span class="line"></span><br><span class="line">In general you should use statvfs(), the Posix one. Be careful about &quot;use Posix&quot; advice, though, as in some cases (pty, for example) the BSD (or whatever) one is more portable in practice.</span><br></pre></td></tr></table></figure>
-
-<p>也即是说这两个函数作用相同，之所以有两个是由于历史与标准原因。最开始的4.4BSD定义的是ststfs()函数，Linux内核后来实现了一个略微有所不同，但是名字也叫这个的函数，这两个statfs()函数返回的内容的数据结构有所不同。后来Posix想要实现freenix与Unix的标准化，于是定义了ststvfs()函数。简单来说就是statfs()函数是针对系统来说的，Unix有一个，Linux也有一个；而statvfs()函数则是符合Posix规范的。</p>
-<h3 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h3><p>回到开头的问题，Ansible的setup模块与linux中的df工具，区别在于前者直接调用statvfs()系统函数，后者可能调用statfs()函数（linux内核版本低于2.6.36），也可能调用statvfs()函数（linux内核版本高于2.6.36）。</p>
-]]></content>
-      <categories>
-        <category>Ansible</category>
-      </categories>
-      <tags>
-        <tag>Ansible</tag>
-        <tag>linux</tag>
-        <tag>Devops</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Jmeter基本使用与常见性能瓶颈</title>
-    <url>/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<h2 id="Jmeter基本使用与常见性能瓶颈"><a href="#Jmeter基本使用与常见性能瓶颈" class="headerlink" title="Jmeter基本使用与常见性能瓶颈"></a>Jmeter基本使用与常见性能瓶颈</h2><h3 id="一、什么是Jmeter"><a href="#一、什么是Jmeter" class="headerlink" title="一、什么是Jmeter"></a>一、什么是Jmeter</h3><p><a href="https://jmeter.apache.org/" target="_blank" rel="noopener">官网链接</a></p>
-<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/小服务程序/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，<a id="more"></a>在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能/<a href="https://baike.baidu.com/item/回归测试/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/使用正则表达式/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
-<h3 id="二、Jmeter中的相关概念"><a href="#二、Jmeter中的相关概念" class="headerlink" title="二、Jmeter中的相关概念"></a>二、Jmeter中的相关概念</h3><ol>
-<li>线程：一个线程可以理解为一个虚拟用户。比如10个线程表示有10个用户不间断发起请求，也可以理解为<strong>并发数</strong></li>
-<li>线程组：测试的起点。一个测试计划必须包含至少一个线程组，其余所有组件都必须在线程组下</li>
-<li>监听器：用来查看测试过程中的各项指标</li>
-<li>取样器（Sample）是性能测试中向服务器发送请求，记录响应信息，记录响应时间的最小单元。JMeter 原生支持多种不同的sampler ，如 HTTP Request Sampler 、 FTP  Request Sample 、TCP  Request Sample 、JDBC Request Sampler 等，每一种不同类型的 sampler 可以根据设置的参数向服务器发出不同类型的请求。（<strong>实际上就是配置请求地址和请求参数的地方</strong>）</li>
-<li>定时器（Timer）用于操作之间设置等待时间，等待时间是性能测试中常用的控制客户端QPS的手端。类似于LoadRunner里面的“思考时间”。JMeter 定义了Bean Shell Timer、Constant Throughput Timer、固定定时器等不同类型的Timer。</li>
-</ol>
-<h3 id="三、压力测试过程"><a href="#三、压力测试过程" class="headerlink" title="三、压力测试过程"></a>三、压力测试过程</h3><p>本小节以单一请求为例，描述压力测试设置请求参数、查看测试结果的过程</p>
-<ol>
-<li>从官网下载jmeter，解压缩</li>
-<li>Windows下打开bin/jmeter.cmd</li>
-<li>新建测试计划与线程组。打开后默认已建立一个测试计划，右击测试计划根据需要新建线程组，一般选择“setUp Thread Group（常规线程组）”或“Stepping Thread Group（阶梯测试线程组）”</li>
-<li>右击线程组根据需要新建取样器（设置请求参数的地方），一般我们是新建HTTP Request</li>
-<li>右击线程组，根据需要查看的指标新建监听器，一般结果树（view Result Tree）和聚合报告（Summary Report）是必需的，前者可以看到jmeter发出的每个请求的响应情况，后者可以在生成实时汇总报告</li>
-</ol>
-<p><img src="https://img-blog.csdnimg.cn/f5c9c5f794cc49c99c8aff44b562b334.png#pic_center" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#线程组参数说明</span><br><span class="line">- 线程数： 同时发起的请求数。如线程数为10表示用10个线程模拟10个用户发起请求</span><br><span class="line">- Ramp-Up时间： 多长时间内启动完全部线程</span><br><span class="line">- 循环次数：每个线程循环请求的次数，设置为永远则所有线程持续不间断请求</span><br><span class="line">- 持续时间： 测试请求的时间</span><br><span class="line">- 启动延迟： 单一脚本时用不上。此参数表示当有多个jmeter脚本时，间隔多长时间启动下一脚本</span><br></pre></td></tr></table></figure>
-
-<ol start="6">
-<li><p>因为jmeter图形化界面本身会占用一定资源，为了最大化资源利用效率，jmeter官方也推荐在命令行下进行压力测试，而仅在图形界面设置参数与查看最终结果，因此以上设置完成之后需要保存为jmx文件</p>
-</li>
-<li><p>将jmx文件与jmeter压缩包一起上传到linux服务器或其他有命令行的地方，执行以下命令开始压测</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">jmeter -n -t .&#x2F;xxx.jmx -l ..&#x2F;xxx.jtl -e -o ..&#x2F;xxx</span><br><span class="line">#参数说明：</span><br><span class="line">- -n 表示以命令行执行脚本</span><br><span class="line">- -t 指明测试脚本文件的位置（测试脚本文件为jmx文件）</span><br><span class="line">- -l 指明测试结果保存的位置（测试结果文件为jtl文件）</span><br><span class="line">- -e -o 表示同时生成网页报告以及网页文件存放的目录，该目录应为空或不存在</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将测试结果文件（jtl文件）拿出来，导入到jmeter图形界面中，查看测试结果；或将网页文件拿出来在网页上查看测试结果</p>
-</li>
-</ol>
-<h3 id="四、测试结果查看"><a href="#四、测试结果查看" class="headerlink" title="四、测试结果查看"></a>四、测试结果查看</h3><ol>
-<li>测试过程中的实时查看：</li>
-</ol>
-<p><img src="https://img-blog.csdnimg.cn/3c8cad8b6b23484da23f3cb1e4f2d978.png#pic_center" alt=""></p>
-<p>在命令行执行脚本测试过程中，会看到以上页面。</p>
-<ul>
-<li>“summary +”表示测试过程中的变化量，“summary =”所在的行才是我们需要关注的测试结果，其后跟的数字代表发送请求的数量</li>
-<li>in 后面跟的是时间</li>
-<li>= 后面跟的是吞吐量，可以近似看作QPS、TPS</li>
-<li>Avg、Min、Max 表示请求响应的平均时间、最小时间、最大时间</li>
-<li>Err 后面跟的是错误请求的数量与百分比</li>
-<li>Active、Started、Finished表示线程数</li>
-</ul>
-<p>如前三行可以解读为：</p>
-<ul>
-<li>在前23秒的时候发起了767次请求，TPS为33.3/s，平均响应时间为5724ms，最小响应时间为142ms，最大响应时间为22562ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
-<li>在其后的30s內，共发起1212次请求，这30s內TPS为40.4/s，平均响应时间为12531ms，最小响应时间为394ms，最大响应时间为49573ms，此过程中共有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
-<li>总结以上，在前53s时间内，共发起1979次请求，TPS为37.3，平均响应时间为9893ms，最小响应时间为142ms，最大响应时间为49573ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
-</ul>
-<ol start="2">
-<li><p>测试结束后将结果文件（jtl文件）导入到jmeter图形界面：</p>
-<p>结果树：<br><img src="https://img-blog.csdnimg.cn/fb7549fb276b40f28d6b786687f7d759.png#pic_center" alt=""></p>
-<p>结果树可以看到每个请求的响应情况</p>
-<p>聚合报告：</p>
-<p><img src="https://img-blog.csdnimg.cn/c589751702a7418f80f306053020509d.png#pic_center" alt=""></p>
-<p>聚合报告可以看到发起的总请求数、平均响应时间、响应时间的中位数、90%的请求在多长时间内完成响应、95%的请求在多长时间内完成响应、99%的请求在多长时间内完成响应、响应时间的最大值、响应时间的最小值、异常请求所占的比例、吞吐量（TPS）以及发送、接受数据的速度</p>
-</li>
-</ol>
-<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><ol>
-<li><p>如果调整参数每次都在图形界面进行，对于我们在命令行进行测试十分不方便，我们可以直接修改jmx文件实现参数调整，如果线程组使用的是“setUp Thread Group”，那么可以在jmx文件中全局搜索“setUp”关键字，找到以下内容修改：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;SetupThreadGroup guiclass&#x3D;&quot;SetupThreadGroupGui&quot; testclass&#x3D;&quot;SetupThreadGroup&quot; testname&#x3D;&quot;setUp Thread Group&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.on_sample_error&quot;&gt;continue&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;elementProp name&#x3D;&quot;ThreadGroup.main_controller&quot; elementType&#x3D;&quot;LoopController&quot; guiclass&#x3D;&quot;LoopControlPanel&quot; testclass&#x3D;&quot;LoopController&quot; testname&#x3D;&quot;Loop Controller&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;LoopController.continue_forever&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;intProp name&#x3D;&quot;LoopController.loops&quot;&gt;-1&lt;&#x2F;intProp&gt;</span><br><span class="line">        &lt;&#x2F;elementProp&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.num_threads&quot;&gt;200&lt;&#x2F;stringProp&gt;        &lt;!--线程数--&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.ramp_time&quot;&gt;1&lt;&#x2F;stringProp&gt;            &lt;!--多长时间内启动所有线程--&gt;</span><br><span class="line">        &lt;boolProp name&#x3D;&quot;ThreadGroup.scheduler&quot;&gt;true&lt;&#x2F;boolProp&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.duration&quot;&gt;120&lt;&#x2F;stringProp&gt;           &lt;!--测试持续时间--&gt;</span><br><span class="line">        &lt;stringProp name&#x3D;&quot;ThreadGroup.delay&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;boolProp name&#x3D;&quot;ThreadGroup.same_user_on_next_iteration&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">      &lt;&#x2F;SetupThreadGroup&gt;</span><br></pre></td></tr></table></figure>
-
-   <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;HTTPSamplerProxy guiclass&#x3D;&quot;HttpTestSampleGui&quot; testclass&#x3D;&quot;HTTPSamplerProxy&quot; testname&#x3D;&quot;HTTP Request&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;elementProp name&#x3D;&quot;HTTPsampler.Arguments&quot; elementType&#x3D;&quot;Arguments&quot; guiclass&#x3D;&quot;HTTPArgumentsPanel&quot; testclass&#x3D;&quot;Arguments&quot; testname&#x3D;&quot;User Defined Variables&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">            &lt;collectionProp name&#x3D;&quot;Arguments.arguments&quot;&#x2F;&gt;</span><br><span class="line">          &lt;&#x2F;elementProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.domain&quot;&gt;x.x.x.x&lt;&#x2F;stringProp&gt;        &lt;!--请求地址--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.port&quot;&gt;xxxx&lt;&#x2F;stringProp&gt;                &lt;!--请求端口--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.protocol&quot;&gt;http&lt;&#x2F;stringProp&gt;            &lt;!--请求协议--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.contentEncoding&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.path&quot;&gt;&#x2F;xxxx&lt;&#x2F;stringProp&gt;             &lt;!--请求路径--&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.method&quot;&gt;GET&lt;&#x2F;stringProp&gt;                 &lt;!--请求方式--&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.follow_redirects&quot;&gt;true&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.auto_redirects&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.use_keepalive&quot;&gt;true&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;HTTPSampler.DO_MULTIPART_POST&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.embedded_url_re&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.connect_timeout&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;HTTPSampler.response_timeout&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;HTTPSamplerProxy&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>如果需要测试存储服务或其他下载服务，可以选中当前线程组，右键添加后置处理程序-》BeanShell PostProcessor，加入以下脚本：</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();</span><br></pre></td></tr></table></figure>
-
-<p>或直接在jmx文件中与”ResultCollector“平级的层加入：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;BeanShellPostProcessor guiclass&#x3D;&quot;TestBeanGUI&quot; testclass&#x3D;&quot;BeanShellPostProcessor&quot; testname&#x3D;&quot;BeanShell PostProcessor&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;filename&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;parameters&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;resetInterpreter&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;script&quot;&gt;import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;BeanShellPostProcessor&gt;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="五、常见的性能瓶颈"><a href="#五、常见的性能瓶颈" class="headerlink" title="五、常见的性能瓶颈"></a>五、常见的性能瓶颈</h3><ul>
-<li>网络带宽（尤其是压测请求的请求体或响应体较大的时候尤为明显）</li>
-<li>磁盘IO（与之相关的是nginx、程序的日志级别）</li>
-<li>JVM参数</li>
-<li>网络参数（/etc/ sysctl.conf）</li>
-</ul>
-]]></content>
-      <categories>
-        <category>运维工具</category>
-      </categories>
-      <tags>
-        <tag>jmeter</tag>
-        <tag>运维工具</tag>
-        <tag>压力测试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>没有进程号的进程</title>
-    <url>/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</url>
-    <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，<a id="more"></a>一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
-<p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png" alt=""></p>
-<p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psef.jpeg" alt=""></p>
-<p>很明显，也没有什么发现，于是他觉得这可能是某个僵尸进程所有。由于linux系统中，如果一个进程成为僵尸进程之后，用ps命令查看时，该进程的状态栏会被标记为<strong>defunct</strong>，于是他试图用ps命令查找服务器上的僵尸进程：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psaux.png" alt=""></p>
-<p>但是很遗憾，还是没有什么发现，甚至通过*<em>lsof -i:port *</em>命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/telnet.png" alt=""></p>
-<p>端口是通的，说明有后台是有一个正常进程在处理它，所以小L开始慌张了，他下一步想确认到底是不是某些不知名人物所为。如果是不知名人物所为，那大概了会有网络连接的，所以小L用了ss命令：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/ss.png" alt=""></p>
-<p>还好，通过20090端口只有一个处于ESTAB状态的连接，这是他自己telnet的结果，他稍稍心安。但是这个进程到底是谁建立的呢？小L同学走投无路之下，只好尝试笨办法–直接全局搜索端口号：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/grep.png" alt=""></p>
-<p>还真让他找出来了一些东西，但是很遗憾，这并不是他要的结果，只是服务器上部署的普罗米修斯程序的日志里面有数据刚好匹配上了20090这个字符串。小L同学继续在网络的海洋里游啊游，还真让他找到了一些东西。</p>
-<p><strong>rpcinfo</strong>工具可以显示所有使用<strong>portmap</strong>注册的程序的信息。rpcinfo -p x.x.x.x 可以基于rpc协议访问服务器，通过服务器返回的响应信息探测主机x.x.x.x上已经注册的rpc服务的信息。</p>
-<p><strong>portmap</strong> 是一个rpc端口映射程序，最初由 Sun 公司开发，它可以将 rpc 程序号映射到网络上的端口号。rpc进程在启动时通知 portmap，显示它们正在监视的端口号以及它们提供服务的 rpc 程序号，然后客户端系统使用特定的 rpc 程序编号联系服务器上的端口映射服务（portmap），然后 portmap 再将客户端重定向到正确的端口号以与其预期的服务进行通信。</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/rpcinfo.png" alt=""></p>
-<p>可以看到，让小L同学备受困扰的20090端口赫然在列！但是这个<strong>nlockmgr</strong>服务是个什么呢？</p>
-<p>nlockmgr是在NFS中用来管理文件的锁定的，防止多个客户端同时写入某个文件是产生冲突。</p>
-<p>NFS服务需要开启 mountd,nfs,nlockmgr,portmapper,rquotad这5个服务，其中nfs、portmapper的端口是固定的，另外三个服务的端口是随机分配的，也可以给mountd,nlockmgr,rquotad设置固定的端口。具体方法很简单，也不再赘述，问问神奇的搜索引擎吧。</p>
-]]></content>
-      <categories>
-        <category>运维经验</category>
-        <category>linux命令</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>运维经验</tag>
-        <tag>linux命令</tag>
       </tags>
   </entry>
 </search>
