@@ -150,7 +150,7 @@ var _hmt = _hmt || [];
     <div class="article-entry" itemprop="articleBody">
        
   <h2 id="Jmeter基本使用与常见性能瓶颈"><a href="#Jmeter基本使用与常见性能瓶颈" class="headerlink" title="Jmeter基本使用与常见性能瓶颈"></a>Jmeter基本使用与常见性能瓶颈</h2><h3 id="一、什么是Jmeter"><a href="#一、什么是Jmeter" class="headerlink" title="一、什么是Jmeter"></a>一、什么是Jmeter</h3><p><a href="https://jmeter.apache.org/" target="_blank" rel="noopener">官网链接</a></p>
-<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/小服务程序/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，<a id="more"></a>在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能/<a href="https://baike.baidu.com/item/回归测试/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/使用正则表达式/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
+<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/%E5%B0%8F%E6%9C%8D%E5%8A%A1%E7%A8%8B%E5%BA%8F/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，<a id="more"></a>在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能&#x2F;<a href="https://baike.baidu.com/item/%E5%9B%9E%E5%BD%92%E6%B5%8B%E8%AF%95/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/%E4%BD%BF%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
 <h3 id="二、Jmeter中的相关概念"><a href="#二、Jmeter中的相关概念" class="headerlink" title="二、Jmeter中的相关概念"></a>二、Jmeter中的相关概念</h3><ol>
 <li>线程：一个线程可以理解为一个虚拟用户。比如10个线程表示有10个用户不间断发起请求，也可以理解为<strong>并发数</strong></li>
 <li>线程组：测试的起点。一个测试计划必须包含至少一个线程组，其余所有组件都必须在线程组下</li>
@@ -161,12 +161,12 @@ var _hmt = _hmt || [];
 <h3 id="三、压力测试过程"><a href="#三、压力测试过程" class="headerlink" title="三、压力测试过程"></a>三、压力测试过程</h3><p>本小节以单一请求为例，描述压力测试设置请求参数、查看测试结果的过程</p>
 <ol>
 <li>从官网下载jmeter，解压缩</li>
-<li>Windows下打开bin/jmeter.cmd</li>
+<li>Windows下打开bin&#x2F;jmeter.cmd</li>
 <li>新建测试计划与线程组。打开后默认已建立一个测试计划，右击测试计划根据需要新建线程组，一般选择“setUp Thread Group（常规线程组）”或“Stepping Thread Group（阶梯测试线程组）”</li>
 <li>右击线程组根据需要新建取样器（设置请求参数的地方），一般我们是新建HTTP Request</li>
 <li>右击线程组，根据需要查看的指标新建监听器，一般结果树（view Result Tree）和聚合报告（Summary Report）是必需的，前者可以看到jmeter发出的每个请求的响应情况，后者可以在生成实时汇总报告</li>
 </ol>
-<p><img src="https://img-blog.csdnimg.cn/f5c9c5f794cc49c99c8aff44b562b334.png#pic_center" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/f5c9c5f794cc49c99c8aff44b562b334.png#pic_center"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#线程组参数说明</span><br><span class="line">- 线程数： 同时发起的请求数。如线程数为10表示用10个线程模拟10个用户发起请求</span><br><span class="line">- Ramp-Up时间： 多长时间内启动完全部线程</span><br><span class="line">- 循环次数：每个线程循环请求的次数，设置为永远则所有线程持续不间断请求</span><br><span class="line">- 持续时间： 测试请求的时间</span><br><span class="line">- 启动延迟： 单一脚本时用不上。此参数表示当有多个jmeter脚本时，间隔多长时间启动下一脚本</span><br></pre></td></tr></table></figure>
 
 <ol start="6">
@@ -181,28 +181,28 @@ var _hmt = _hmt || [];
 <h3 id="四、测试结果查看"><a href="#四、测试结果查看" class="headerlink" title="四、测试结果查看"></a>四、测试结果查看</h3><ol>
 <li>测试过程中的实时查看：</li>
 </ol>
-<p><img src="https://img-blog.csdnimg.cn/3c8cad8b6b23484da23f3cb1e4f2d978.png#pic_center" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/3c8cad8b6b23484da23f3cb1e4f2d978.png#pic_center"></p>
 <p>在命令行执行脚本测试过程中，会看到以上页面。</p>
 <ul>
-<li>“summary +”表示测试过程中的变化量，“summary =”所在的行才是我们需要关注的测试结果，其后跟的数字代表发送请求的数量</li>
+<li>“summary +”表示测试过程中的变化量，“summary &#x3D;”所在的行才是我们需要关注的测试结果，其后跟的数字代表发送请求的数量</li>
 <li>in 后面跟的是时间</li>
-<li>= 后面跟的是吞吐量，可以近似看作QPS、TPS</li>
+<li>&#x3D; 后面跟的是吞吐量，可以近似看作QPS、TPS</li>
 <li>Avg、Min、Max 表示请求响应的平均时间、最小时间、最大时间</li>
 <li>Err 后面跟的是错误请求的数量与百分比</li>
 <li>Active、Started、Finished表示线程数</li>
 </ul>
 <p>如前三行可以解读为：</p>
 <ul>
-<li>在前23秒的时候发起了767次请求，TPS为33.3/s，平均响应时间为5724ms，最小响应时间为142ms，最大响应时间为22562ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
-<li>在其后的30s內，共发起1212次请求，这30s內TPS为40.4/s，平均响应时间为12531ms，最小响应时间为394ms，最大响应时间为49573ms，此过程中共有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
+<li>在前23秒的时候发起了767次请求，TPS为33.3&#x2F;s，平均响应时间为5724ms，最小响应时间为142ms，最大响应时间为22562ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
+<li>在其后的30s內，共发起1212次请求，这30s內TPS为40.4&#x2F;s，平均响应时间为12531ms，最小响应时间为394ms，最大响应时间为49573ms，此过程中共有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
 <li>总结以上，在前53s时间内，共发起1979次请求，TPS为37.3，平均响应时间为9893ms，最小响应时间为142ms，最大响应时间为49573ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
 </ul>
 <ol start="2">
 <li><p>测试结束后将结果文件（jtl文件）导入到jmeter图形界面：</p>
-<p>结果树：<br><img src="https://img-blog.csdnimg.cn/fb7549fb276b40f28d6b786687f7d759.png#pic_center" alt=""></p>
+<p>结果树：<br><img src="https://img-blog.csdnimg.cn/fb7549fb276b40f28d6b786687f7d759.png#pic_center"></p>
 <p>结果树可以看到每个请求的响应情况</p>
 <p>聚合报告：</p>
-<p><img src="https://img-blog.csdnimg.cn/c589751702a7418f80f306053020509d.png#pic_center" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/c589751702a7418f80f306053020509d.png#pic_center"></p>
 <p>聚合报告可以看到发起的总请求数、平均响应时间、响应时间的中位数、90%的请求在多长时间内完成响应、95%的请求在多长时间内完成响应、99%的请求在多长时间内完成响应、响应时间的最大值、响应时间的最小值、异常请求所占的比例、吞吐量（TPS）以及发送、接受数据的速度</p>
 </li>
 </ol>
@@ -216,15 +216,13 @@ var _hmt = _hmt || [];
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();</span><br></pre></td></tr></table></figure>
 
 <p>或直接在jmx文件中与”ResultCollector“平级的层加入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;BeanShellPostProcessor guiclass&#x3D;&quot;TestBeanGUI&quot; testclass&#x3D;&quot;BeanShellPostProcessor&quot; testname&#x3D;&quot;BeanShell PostProcessor&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;filename&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;parameters&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;resetInterpreter&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;script&quot;&gt;import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;BeanShellPostProcessor&gt;</span><br></pre></td></tr></table></figure>
-
-</li>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;BeanShellPostProcessor guiclass&#x3D;&quot;TestBeanGUI&quot; testclass&#x3D;&quot;BeanShellPostProcessor&quot; testname&#x3D;&quot;BeanShell PostProcessor&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;filename&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;parameters&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;resetInterpreter&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;script&quot;&gt;import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;BeanShellPostProcessor&gt;</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h3 id="五、常见的性能瓶颈"><a href="#五、常见的性能瓶颈" class="headerlink" title="五、常见的性能瓶颈"></a>五、常见的性能瓶颈</h3><ul>
 <li>网络带宽（尤其是压测请求的请求体或响应体较大的时候尤为明显）</li>
 <li>磁盘IO（与之相关的是nginx、程序的日志级别）</li>
 <li>JVM参数</li>
-<li>网络参数（/etc/ sysctl.conf）</li>
+<li>网络参数（&#x2F;etc&#x2F; sysctl.conf）</li>
 </ul>
  
       <!-- reward -->
@@ -328,7 +326,7 @@ var _hmt = _hmt || [];
     <ul>
       <li>
         Copyrights &copy;
-        2020-2023
+        2020-2025
         <i class="ri-heart-fill heart_icon"></i> Komorebi
       </li>
     </ul>
@@ -425,6 +423,10 @@ var _hmt = _hmt || [];
         <i class="ri-search-line"></i>
       </a>
       
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
       
     </li>
   </ul>

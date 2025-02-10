@@ -125,7 +125,7 @@ var _hmt = _hmt || [];
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">660</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -134,7 +134,7 @@ var _hmt = _hmt || [];
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">6 min</span>
         </span>
     </span>
 </div>
@@ -149,12 +149,14 @@ var _hmt = _hmt || [];
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang/Rabbitmq"></a>编译安装Erlang/Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+  <h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang&#x2F;Rabbitmq"></a>编译安装Erlang&#x2F;Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
 <p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
 <h3 id="二、编译安装Erlang"><a href="#二、编译安装Erlang" class="headerlink" title="二、编译安装Erlang"></a>二、编译安装Erlang</h3><p>erlang与rabbitmq之间存在版本依赖，具体查看<a href="https://www.rabbitmq.com/which-erlang.html#compatibility-matrix" target="_blank" rel="noopener">此处</a></p>
 <p>Erlang下载地址： <a href="https://www.erlang.org/downloads" target="_blank" rel="noopener">点此下载</a></p>
 <p><strong>编译过程：</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC unixODBC-devel httpd python-simplejson</span><br><span class="line">wget http:&#x2F;&#x2F;erlang.org&#x2F;download&#x2F;otp_src_19.2.tar.gz</span><br><span class="line">tar -xzvf otp_src_19.2.tar.gz</span><br><span class="line">cd otp_src_19.2</span><br><span class="line">.&#x2F;configure  --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2 --enable-smp-support  --enable-threads  --enable-sctp --enable-kernel-poll --enable-hipe  --with-ssl --without-javac</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#编译安装openssl依赖</span><br><span class="line">wget https:&#x2F;&#x2F;www.openssl.org&#x2F;source&#x2F;openssl-3.3.0.tar.gz</span><br><span class="line">tar -zxvf openssl-3.3.0.tar.gz</span><br><span class="line">cd openssl-3.3.0</span><br><span class="line">#一定要加 shared 参数编译成动态链接库</span><br><span class="line">.&#x2F;config --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-26.2.3&#x2F;openssl shared zlib</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC unixODBC-devel httpd python-simplejson lksctp-tools lksctp-tools-devel perl perl-devel perl-IPC-Cmd zlib zlib-devel ncurses ncurses-devel</span><br><span class="line">wget http:&#x2F;&#x2F;erlang.org&#x2F;download&#x2F;otp_src_19.2.tar.gz</span><br><span class="line">tar -xzvf otp_src_19.2.tar.gz</span><br><span class="line">cd otp_src_19.2</span><br><span class="line">.&#x2F;configure  --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2 --enable-smp-support  --enable-threads  --enable-sctp --enable-kernel-poll --enable-hipe  --with-ssl&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2&#x2F;openssl --without-javac</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
 
 <p><strong>配置环境变量：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;profile</span><br><span class="line"># 文件末尾添加以下</span><br><span class="line">export ERL_HOME&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2</span><br><span class="line">export PATH&#x3D;$PATH:$ERL_HOME&#x2F;bin</span><br><span class="line"># 重新加载配置文件</span><br><span class="line">source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure>
@@ -169,11 +171,11 @@ var _hmt = _hmt || [];
 <p>编译完成之后会在当前路径下看到可执行程序的目录sbin，可以删除多余文件及路径，最后保留如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-3.9.13</span><br><span class="line">├── deps</span><br><span class="line">├── erlang_ls.config</span><br><span class="line">├── escript</span><br><span class="line">├── plugins</span><br><span class="line">├── sbin</span><br><span class="line">└── scripts</span><br></pre></td></tr></table></figure>
 
-<h3 id="四、Erlang-Rabbitmq编译安装过程中的问题"><a href="#四、Erlang-Rabbitmq编译安装过程中的问题" class="headerlink" title="四、Erlang/Rabbitmq编译安装过程中的问题"></a>四、Erlang/Rabbitmq编译安装过程中的问题</h3><p><strong>1、configure: error: No curses library functions found</strong></p>
+<h3 id="四、Erlang-Rabbitmq编译安装过程中的问题"><a href="#四、Erlang-Rabbitmq编译安装过程中的问题" class="headerlink" title="四、Erlang&#x2F;Rabbitmq编译安装过程中的问题"></a>四、Erlang&#x2F;Rabbitmq编译安装过程中的问题</h3><p><strong>1、configure: error: No curses library functions found</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install ncurses-devel -y</span><br></pre></td></tr></table></figure>
 
 <p><strong>2、编译报错缺乏mix命令</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">原因： 报错 &quot;找不到 mix 命令&quot; 是因为你在执行 RabbitMQ 的编译过程中缺少了 Elixir 环境，而 RabbitMQ 的一些组件可能使用了 Elixir 语言</span><br><span class="line">解决：下载编译安装elixir</span><br><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;elixir-lang&#x2F;elixir</span><br><span class="line">下载对应版本之后：</span><br><span class="line">unzip .&#x2F;elixir-1.14.2.zip</span><br><span class="line">cd .&#x2F;elixir-1.14.2</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Ps:需要注意的是编译安装的rabbitmq版本与elixir的版本之间有依赖关系，如：rabbitmq-3.9.13 版本需要elixir的版本 &gt;12 且 &lt;13</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">原因： 报错 &quot;找不到 mix 命令&quot; 是因为你在执行 RabbitMQ 的编译过程中缺少了 Elixir 环境，而 RabbitMQ 的一些组件可能使用了 Elixir 语言</span><br><span class="line">解决：下载编译安装elixir</span><br><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;elixir-lang&#x2F;elixir</span><br><span class="line">下载对应版本之后：</span><br><span class="line">unzip .&#x2F;elixir-1.12.3.zip</span><br><span class="line">cd .&#x2F;elixir-1.12.3</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Ps:需要注意的是编译安装的rabbitmq版本与elixir的版本之间有依赖关系，如：rabbitmq-3.9.13 版本需要elixir的版本 &gt;12 且 &lt;13</span><br></pre></td></tr></table></figure>
 
 <p><strong>3、rsync: command not found报错</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install rsync -y</span><br></pre></td></tr></table></figure>
@@ -186,6 +188,12 @@ var _hmt = _hmt || [];
 
 <p><strong>6、you may need to install the CPAN module</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;metacpan.org&#x2F;dist&#x2F;CPAN</span><br><span class="line">tar -zxvf .&#x2F;CPAN-2.36.tar.gz</span><br><span class="line">cd .&#x2F;CPAN-2.36</span><br><span class="line">perl5.28.3 Makefile.PL</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p><strong>7、 make 报错如下：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">gen&#x2F;wxe_funcs.cpp: In member function ‘void WxeApp::wxe_dispatch(wxeCommand&amp;)’:</span><br><span class="line">gen&#x2F;wxe_funcs.cpp:8289:45: error: taking address of temporary [-fpermissive]</span><br><span class="line">  const wxBitmap * Result &#x3D; &amp;This-&gt;GetBitmap();</span><br><span class="line">                                             ^</span><br><span class="line">gen&#x2F;wxe_funcs.cpp:8495:101: error: call of overloaded ‘AddTool(int&amp;, wxString&amp;, wxBitmap&amp;, wxString&amp;, wxItemKind&amp;)’ is ambiguous</span><br><span class="line">  wxToolBarToolBase * Result &#x3D; (wxToolBarToolBase*)This-&gt;AddTool(*toolid,label,*bitmap,shortHelp,kind);</span><br><span class="line">                                                                                                     ^</span><br><span class="line">gen&#x2F;wxe_funcs.cpp:8495:101: note: candidates are:</span><br><span class="line">In file included from &#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;toolbar.h:67:0,</span><br><span class="line">                 from &#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;wx.h:87,</span><br><span class="line">                 from gen&#x2F;wxe_funcs.cpp:23:</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;tbarbase.h:311:24: note: wxToolBarToolBase* wxToolBarBase::AddTool(int, const wxString&amp;, const wxBitmapBundle&amp;, const wxString&amp;, wxItemKind)</span><br><span class="line">     wxToolBarToolBase *AddTool(int toolid,</span><br><span class="line">                        ^</span><br><span class="line">In file included from &#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;wx.h:14:0,</span><br><span class="line">                 from gen&#x2F;wxe_funcs.cpp:23:</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;tbarbase.h:527:24: note: wxToolBarToolBase* wxToolBarBase::AddTool(int, const wxBitmap&amp;, const wxBitmap&amp;, bool, wxCoord, wxCoord, wxObject*, const wxString&amp;, const wxString&amp;)</span><br><span class="line">     wxToolBarToolBase *AddTool(int toolid,</span><br><span class="line">                        ^</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;defs.h:675:43: note: in definition of macro ‘wxDEPRECATED’</span><br><span class="line"> #define wxDEPRECATED(x) wxDEPRECATED_DECL x</span><br><span class="line">                                           ^</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;tbarbase.h:526:5: note: in expansion of macro ‘wxDEPRECATED_INLINE’</span><br><span class="line">     wxDEPRECATED_INLINE(</span><br><span class="line">     ^</span><br><span class="line">make[3]: *** [aarch64-unknown-linux-gnu&#x2F;wxe_funcs.o] Error 1</span><br><span class="line">make[3]: *** Waiting for unfinished jobs....</span><br><span class="line">make[3]: Leaving directory &#96;&#x2F;apps&#x2F;temp-lzh&#x2F;build-rabbitmq&#x2F;otp_src_23.3.4.11&#x2F;lib&#x2F;wx&#x2F;c_src&#39;</span><br><span class="line">make[2]: *** [opt] Error 2</span><br><span class="line">make[2]: Leaving directory &#96;&#x2F;apps&#x2F;temp-lzh&#x2F;build-rabbitmq&#x2F;otp_src_23.3.4.11&#x2F;lib&#x2F;wx&#39;</span><br><span class="line">make[1]: *** [opt] Error 2</span><br><span class="line">make[1]: Leaving directory &#96;&#x2F;apps&#x2F;temp-lzh&#x2F;build-rabbitmq&#x2F;otp_src_23.3.4.11&#x2F;lib&#39;</span><br><span class="line">make: *** [libs] Error 2</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决方法：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">查看.&#x2F;HOWTO&#x2F;INSTALL.md文件里面关于“ Building with wxErlang ”的说明部分,下载对应版本的wx包</span><br><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;wxWidgets&#x2F;wxWidgets&#x2F;releases&#x2F;download&#x2F;v3.0.3&#x2F;wxWidgets-3.0.3.tar.bz2</span><br><span class="line">bzip2 -dkv .&#x2F;wxWidgets-3.0.3.tar.bz2</span><br><span class="line">tar -xvf .&#x2F;wxWidgets-3.0.3.tar</span><br><span class="line">cd .&#x2F;wxWidgets-3.0.3</span><br><span class="line">.&#x2F;configure --build&#x3D;arm-linux</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
 
  
       <!-- reward -->
@@ -289,7 +297,7 @@ var _hmt = _hmt || [];
     <ul>
       <li>
         Copyrights &copy;
-        2020-2023
+        2020-2025
         <i class="ri-heart-fill heart_icon"></i> Komorebi
       </li>
     </ul>
@@ -386,6 +394,10 @@ var _hmt = _hmt || [];
         <i class="ri-search-line"></i>
       </a>
       
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
       
     </li>
   </ul>

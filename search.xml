@@ -5,18 +5,21 @@
     <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/</url>
     <content><![CDATA[<h2 id="编译安装MongoDB（含gcc环境）"><a href="#编译安装MongoDB（含gcc环境）" class="headerlink" title="编译安装MongoDB（含gcc环境）"></a>编译安装MongoDB（含gcc环境）</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
 <p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
-<h3 id="二、编译安装MongoDB"><a href="#二、编译安装MongoDB" class="headerlink" title="二、编译安装MongoDB"></a>二、编译安装MongoDB</h3><p>mongoDB源码下载地址：<a href="https://www.mongodb.com/try/download/community-kubernetes-operator" target="_blank" rel="noopener">https://www.mongodb.com/try/download/community-kubernetes-operator</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#安装编译依赖</span><br><span class="line">yum install pcre-devel python-devel python3-devel openssl-*  liblzma-dev xz-devel </span><br><span class="line">yum install libcurl*</span><br><span class="line"># 安装pip3</span><br><span class="line">python3 -m pip install pip-23.2.1-py3-none-any.whl</span><br><span class="line">#安装scon</span><br><span class="line">下载地址：https:&#x2F;&#x2F;scons.org&#x2F;pages&#x2F;download.html</span><br><span class="line">解压之后进入目录：python3 setup.py install</span><br><span class="line">验证：scons -h</span><br><span class="line">#编译安装mongo，需要很多空间（可用空间大于20G左右最好），以及很长时间（几小时）</span><br><span class="line">tar -zxvf .&#x2F;mongodb-src-r4.4.24-rc0.tar.gz</span><br><span class="line">cd .&#x2F;mongodb-src-r4.4.24-rc0</span><br><span class="line">#编译安装mongo3.2.22不需要这一步</span><br><span class="line">pip3 install -r .&#x2F;buildscripts&#x2F;requirements.txt</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons &amp;&amp; &#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons PREFIX&#x3D;&#x2F;apps&#x2F;server&#x2F;mongo  install</span><br><span class="line">(编译安装mongo-3.2.22为：scons mongo mongod mongos --disable-warnings-as-errors)</span><br><span class="line">#上述编译出来的可执行程序太大，因为里面包含了调试信息，需要去掉</span><br><span class="line">cd .&#x2F;bin</span><br><span class="line">strip mongo mongod mongos</span><br><span class="line"></span><br><span class="line">编译完毕！！（含泪洒下一把血泪 5555）</span><br></pre></td></tr></table></figure>
+<h3 id="二、依赖关系"><a href="#二、依赖关系" class="headerlink" title="二、依赖关系"></a>二、依赖关系</h3><h4 id="1-mongo-4-4-27"><a href="#1-mongo-4-4-27" class="headerlink" title="1. mongo 4.4.27"></a>1. mongo 4.4.27</h4><p>python 3.7.9   (如果系统默认的python版本是python2，但是又不想影响系统环境，可以使用 alias ‘python’&#x3D;’python3’，用别名的形式临时切换使用的python版本)</p>
+<p>scons 4.5.2</p>
+<p>gcc 8.2.0</p>
+<h3 id="三、编译安装MongoDB"><a href="#三、编译安装MongoDB" class="headerlink" title="三、编译安装MongoDB"></a>三、编译安装MongoDB</h3><p>mongoDB源码下载地址：<a href="https://www.mongodb.com/try/download/community-kubernetes-operator" target="_blank" rel="noopener">https://www.mongodb.com/try/download/community-kubernetes-operator</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#安装编译依赖</span><br><span class="line">yum install pcre-devel python-devel python3-devel openssl-*  liblzma-dev xz-devel openssl openssl-devel xz-devel libcurl* net-snmp-devel cyrus-sasl-devel openldap-devel</span><br><span class="line"># 安装pip3</span><br><span class="line">python3 -m pip install pip-23.2.1-py3-none-any.whl</span><br><span class="line">#安装scon</span><br><span class="line">下载地址：https:&#x2F;&#x2F;scons.org&#x2F;pages&#x2F;download.html</span><br><span class="line">解压之后进入目录：python3 setup.py install</span><br><span class="line">验证：scons -h</span><br><span class="line">#编译安装mongo，需要很多空间（可用空间大于20G左右最好），以及很长时间（几小时）</span><br><span class="line">tar -zxvf .&#x2F;mongodb-src-r4.4.24-rc0.tar.gz</span><br><span class="line">cd .&#x2F;mongodb-src-r4.4.24-rc0</span><br><span class="line">#编译安装mongo3.2.22不需要这一步</span><br><span class="line">pip3 install -r .&#x2F;buildscripts&#x2F;requirements.txt</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons &amp;&amp; &#x2F;usr&#x2F;local&#x2F;bin&#x2F;scons PREFIX&#x3D;&#x2F;apps&#x2F;server&#x2F;mongo  install</span><br><span class="line">(编译安装mongo-3.2.22为：“ scons -j 4 mongo mongod mongos --disable-warnings-as-errors MONGO_VERSION&#x3D;3.2.22” 其中，-j参数值为cpu核数，意思是利用所有核来编译，加快编译进度)</span><br><span class="line">#上述编译出来的可执行程序太大，因为里面包含了调试信息，需要去掉</span><br><span class="line">cd .&#x2F;bin</span><br><span class="line">strip mongo mongod mongos</span><br><span class="line"></span><br><span class="line">编译完毕！！（含泪洒下一把血泪 5555）</span><br></pre></td></tr></table></figure>
 
-<h3 id="三、升级gcc环境"><a href="#三、升级gcc环境" class="headerlink" title="三、升级gcc环境"></a>三、升级gcc环境</h3><p>如果在上述编译过程中报错需要更高版本的gcc环境，可按照以下步骤升级</p>
+<h3 id="四、升级gcc环境"><a href="#四、升级gcc环境" class="headerlink" title="四、升级gcc环境"></a>四、升级gcc环境</h3><p>如果在上述编译过程中报错需要更高版本的gcc环境，可按照以下步骤升级</p>
 <p>gcc源码包镜像下载站：<a href="http://ftp.tsukuba.wide.ad.jp/software/gcc/" target="_blank" rel="noopener">http://ftp.tsukuba.wide.ad.jp/software/gcc/</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -xvf gcc-5.3.0.tar.gz</span><br><span class="line">cd gcc-5.3.0</span><br><span class="line">yum -y install bzip2 wget git</span><br><span class="line">.&#x2F;contrib&#x2F;download_prerequisites</span><br><span class="line">cd ..&#x2F; &amp;&amp; mkdir gcc-build-5.3.0 &amp;&amp; cd gcc-build-5.3.0</span><br><span class="line">..&#x2F;gcc-5.3.0&#x2F;configure --enable-checking&#x3D;release --enable-languages&#x3D;c,c++ --disable-multilib</span><br><span class="line">make &amp;&amp; make install   # 需要等很久</span><br><span class="line"># 新建远程连接后gcc -version验证</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -xvf gcc-5.3.0.tar.gz</span><br><span class="line">cd gcc-5.3.0</span><br><span class="line">yum -y install bzip2 wget git</span><br><span class="line">.&#x2F;contrib&#x2F;download_prerequisites</span><br><span class="line">cd ..&#x2F; &amp;&amp; mkdir gcc-build-5.3.0 &amp;&amp; cd gcc-build-5.3.0</span><br><span class="line">..&#x2F;gcc-5.3.0&#x2F;configure --enable-checking&#x3D;release --enable-languages&#x3D;c,c++ --disable-multilib</span><br><span class="line">make &amp;&amp; make install   # 需要等很久</span><br><span class="line"># 新建远程连接后gcc -version验证</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">export GCC_HOME&#x3D;&#x2F;storage&#x2F;app&#x2F;gnu&#x2F;gcc-8.2.0</span><br><span class="line">export PATH&#x3D;$GCC_HOME&#x2F;bin:$PATH</span><br><span class="line"> </span><br><span class="line">export MANPATH&#x3D;$GCC_HOME&#x2F;share&#x2F;man</span><br><span class="line">export CPATH&#x3D;$GCC_HOME&#x2F;include</span><br><span class="line">export LD_LIBRARY_PATH&#x3D;$GCC_HOME&#x2F;lib:$GCC_HOME&#x2F;lib64</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="四、编译安装过程中的问题"><a href="#四、编译安装过程中的问题" class="headerlink" title="四、编译安装过程中的问题"></a>四、编译安装过程中的问题</h3><p><strong>1、./contrib/download_prerequisites过程中报错校验不通过</strong></p>
+<h3 id="五、编译安装过程中的问题"><a href="#五、编译安装过程中的问题" class="headerlink" title="五、编译安装过程中的问题"></a>五、编译安装过程中的问题</h3><p><strong>1、.&#x2F;contrib&#x2F;download_prerequisites过程中报错校验不通过</strong></p>
 <p>重新执行脚本下载即可</p>
-<p><strong>2、报错“src/third_party/wiredtiger/src/support/global.c:58: error: undefined reference to ‘__wt_checksum_init’”</strong></p>
+<p><strong>2、报错“src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.c:58: error: undefined reference to ‘__wt_checksum_init’”</strong></p>
 <p>看报错就是找不到函数__wt_checksum_init罢了，本来以为是个小问题，但是以C语言的方式引入头文件和函数声明之后依旧报错，无奈采用笨办法</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1、找到该函数的实现和定义文件</span><br><span class="line">[root@i-D2D4127B mongo-r3.2.22-rc0]# grep -irl  __wt_checksum_init .&#x2F;*</span><br><span class="line">.&#x2F;build&#x2F;opt&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.o</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;arm64&#x2F;crc32-arm64.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;power8&#x2F;crc32_wrapper.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;x86&#x2F;crc32-x86.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;zseries&#x2F;crc32-s390x.c</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;include&#x2F;extern.h</span><br><span class="line">.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.c</span><br><span class="line">2、因为我这里是arm机器，所以对应的应该是.&#x2F;src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;checksum&#x2F;arm64&#x2F;crc32-arm64.c文件中，其他同理；将该文件中所有的函数定义、实现、声明全部拷贝到报错的src&#x2F;third_party&#x2F;wiredtiger&#x2F;src&#x2F;support&#x2F;global.c文件靠前的位置即可解决该报错</span><br></pre></td></tr></table></figure>
 
@@ -26,9 +29,21 @@
 
 <p>参考该大佬在树莓派编译mongo失败的经验：<a href="https://old.uwucocoa.moe/2019/11/compile-64bit-mongodb-server-on-raspberry-pi-4/" target="_blank" rel="noopener">大佬文章地址</a></p>
 <p>解决如下：</p>
-<p>在src/third_party/wiredtiger/SConscript文件中对应位置添加<em>env.Append(CFLAGS=[“-march=armv8-a+crc+simd”])</em>，最终的文件对应位置如下：</p>
+<p>在src&#x2F;third_party&#x2F;wiredtiger&#x2F;SConscript文件中对应位置添加<em>env.Append(CFLAGS&#x3D;[“-march&#x3D;armv8-a+crc+simd”])</em>，最终的文件对应位置如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">......</span><br><span class="line">...</span><br><span class="line">if env.TargetOSIs(&#39;windows&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_win&quot;])</span><br><span class="line">    env.Append(CFLAGS&#x3D;[</span><br><span class="line">        &quot;&#x2F;wd4090&quot; # Ignore warning about mismatched const qualifiers</span><br><span class="line">    ])</span><br><span class="line">    if env[&#39;MONGO_ALLOCATOR&#39;] &#x3D;&#x3D; &#39;tcmalloc&#39;:</span><br><span class="line">        env.InjectThirdPartyIncludePaths(libraries&#x3D;[&#39;gperftools&#39;])</span><br><span class="line">        env.Append(CPPDEFINES&#x3D;[&#39;HAVE_LIBTCMALLOC&#39;])</span><br><span class="line">elif env.TargetOSIs(&#39;osx&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_darwin&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;solaris&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_solaris&quot;])</span><br><span class="line">    # For an explanation of __EXTENSIONS__,</span><br><span class="line">    # see http:&#x2F;&#x2F;docs.oracle.com&#x2F;cd&#x2F;E19253-01&#x2F;816-5175&#x2F;standards-5&#x2F;index.html</span><br><span class="line">    env.Append(CPPDEFINES&#x3D;[&quot;__EXTENSIONS__&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;freebsd&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_freebsd&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;openbsd&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_openbsd&quot;])</span><br><span class="line">elif env.TargetOSIs(&#39;linux&#39;):</span><br><span class="line">    env.Append(CPPPATH&#x3D;[&quot;build_linux&quot;])</span><br><span class="line">    env.Append(CPPDEFINES&#x3D;[&quot;_GNU_SOURCE&quot;])</span><br><span class="line">    env.Append(CFLAGS&#x3D;[&quot;-march&#x3D;armv8-a+crc+simd&quot;])</span><br><span class="line">else:</span><br><span class="line">    print(&quot;Wiredtiger is not supported on this platform. &quot; +</span><br><span class="line">        &quot;Please generate an approriate wiredtiger_config.h&quot;)</span><br><span class="line">    Exit(1)</span><br><span class="line">    ...</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
 
+<h3 id="六、上述编译出来的可执行程序使用过程中的问题"><a href="#六、上述编译出来的可执行程序使用过程中的问题" class="headerlink" title="六、上述编译出来的可执行程序使用过程中的问题"></a>六、上述编译出来的可执行程序使用过程中的问题</h3><ol>
+<li><p>mongod程序告警“WARNING: soft rlimits too low. rlimits set to 4096 processes, 1000000 files. Number of processes should be at least 500000 : 0.5 times number of files.”</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">临时解决： ulimit -n 1024 或 ulimit -n unlimited</span><br><span class="line"></span><br><span class="line">永久解决：</span><br><span class="line">vim &#x2F;etc&#x2F;security&#x2F;limits.conf</span><br><span class="line">文件末尾添加：</span><br><span class="line">*    soft    nofile    1000000</span><br><span class="line">*    soft    nproc     500000</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>mongod程序告警“WARNING: soft rlimits too low. The locked memory size is 65536 bytes, it should be at least 1048576 bytes”</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">临时解决： ulimit -l 1048576 或 ulimit -l unlimited</span><br><span class="line"></span><br><span class="line">永久解决：</span><br><span class="line">vim &#x2F;etc&#x2F;security&#x2F;limits.conf</span><br><span class="line">文件末尾添加：</span><br><span class="line">* soft memlock unlimited</span><br><span class="line">* hard memlock unlimited</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译出来的3.2.22版本的mongo客户端程序运行报错“Segmentation fault”，mongo4.x版本编译的客户端无此问题</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mongo3.x版本的bug，3.3.9版本修复</span><br><span class="line"></span><br><span class="line">参考链接：</span><br><span class="line">https:&#x2F;&#x2F;github.com&#x2F;TritonDataCenter&#x2F;pkgsrc-legacy&#x2F;issues&#x2F;389</span><br><span class="line">https:&#x2F;&#x2F;jira.mongodb.org&#x2F;browse&#x2F;SERVER-22927</span><br></pre></td></tr></table></figure></li>
+</ol>
 ]]></content>
       <categories>
         <category>中间件编译</category>
@@ -41,12 +56,14 @@
   <entry>
     <title>编译安装erlang/rabbitmq</title>
     <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85erlang-rabbitmq/</url>
-    <content><![CDATA[<h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang/Rabbitmq"></a>编译安装Erlang/Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+    <content><![CDATA[<h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang&#x2F;Rabbitmq"></a>编译安装Erlang&#x2F;Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
 <p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
 <h3 id="二、编译安装Erlang"><a href="#二、编译安装Erlang" class="headerlink" title="二、编译安装Erlang"></a>二、编译安装Erlang</h3><p>erlang与rabbitmq之间存在版本依赖，具体查看<a href="https://www.rabbitmq.com/which-erlang.html#compatibility-matrix" target="_blank" rel="noopener">此处</a></p>
 <p>Erlang下载地址： <a href="https://www.erlang.org/downloads" target="_blank" rel="noopener">点此下载</a></p>
 <p><strong>编译过程：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC unixODBC-devel httpd python-simplejson</span><br><span class="line">wget http:&#x2F;&#x2F;erlang.org&#x2F;download&#x2F;otp_src_19.2.tar.gz</span><br><span class="line">tar -xzvf otp_src_19.2.tar.gz</span><br><span class="line">cd otp_src_19.2</span><br><span class="line">.&#x2F;configure  --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2 --enable-smp-support  --enable-threads  --enable-sctp --enable-kernel-poll --enable-hipe  --with-ssl --without-javac</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#编译安装openssl依赖</span><br><span class="line">wget https:&#x2F;&#x2F;www.openssl.org&#x2F;source&#x2F;openssl-3.3.0.tar.gz</span><br><span class="line">tar -zxvf openssl-3.3.0.tar.gz</span><br><span class="line">cd openssl-3.3.0</span><br><span class="line">#一定要加 shared 参数编译成动态链接库</span><br><span class="line">.&#x2F;config --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-26.2.3&#x2F;openssl shared zlib</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel unixODBC unixODBC-devel httpd python-simplejson lksctp-tools lksctp-tools-devel perl perl-devel perl-IPC-Cmd zlib zlib-devel ncurses ncurses-devel</span><br><span class="line">wget http:&#x2F;&#x2F;erlang.org&#x2F;download&#x2F;otp_src_19.2.tar.gz</span><br><span class="line">tar -xzvf otp_src_19.2.tar.gz</span><br><span class="line">cd otp_src_19.2</span><br><span class="line">.&#x2F;configure  --prefix&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2 --enable-smp-support  --enable-threads  --enable-sctp --enable-kernel-poll --enable-hipe  --with-ssl&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2&#x2F;openssl --without-javac</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
 
 <p><strong>配置环境变量：</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;profile</span><br><span class="line"># 文件末尾添加以下</span><br><span class="line">export ERL_HOME&#x3D;&#x2F;apps&#x2F;software&#x2F;erlang-19.2</span><br><span class="line">export PATH&#x3D;$PATH:$ERL_HOME&#x2F;bin</span><br><span class="line"># 重新加载配置文件</span><br><span class="line">source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure>
@@ -61,11 +78,11 @@
 <p>编译完成之后会在当前路径下看到可执行程序的目录sbin，可以删除多余文件及路径，最后保留如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rabbitmq-3.9.13</span><br><span class="line">├── deps</span><br><span class="line">├── erlang_ls.config</span><br><span class="line">├── escript</span><br><span class="line">├── plugins</span><br><span class="line">├── sbin</span><br><span class="line">└── scripts</span><br></pre></td></tr></table></figure>
 
-<h3 id="四、Erlang-Rabbitmq编译安装过程中的问题"><a href="#四、Erlang-Rabbitmq编译安装过程中的问题" class="headerlink" title="四、Erlang/Rabbitmq编译安装过程中的问题"></a>四、Erlang/Rabbitmq编译安装过程中的问题</h3><p><strong>1、configure: error: No curses library functions found</strong></p>
+<h3 id="四、Erlang-Rabbitmq编译安装过程中的问题"><a href="#四、Erlang-Rabbitmq编译安装过程中的问题" class="headerlink" title="四、Erlang&#x2F;Rabbitmq编译安装过程中的问题"></a>四、Erlang&#x2F;Rabbitmq编译安装过程中的问题</h3><p><strong>1、configure: error: No curses library functions found</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ncurses-devel -y</span><br></pre></td></tr></table></figure>
 
 <p><strong>2、编译报错缺乏mix命令</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原因： 报错 &quot;找不到 mix 命令&quot; 是因为你在执行 RabbitMQ 的编译过程中缺少了 Elixir 环境，而 RabbitMQ 的一些组件可能使用了 Elixir 语言</span><br><span class="line">解决：下载编译安装elixir</span><br><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;elixir-lang&#x2F;elixir</span><br><span class="line">下载对应版本之后：</span><br><span class="line">unzip .&#x2F;elixir-1.14.2.zip</span><br><span class="line">cd .&#x2F;elixir-1.14.2</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Ps:需要注意的是编译安装的rabbitmq版本与elixir的版本之间有依赖关系，如：rabbitmq-3.9.13 版本需要elixir的版本 &gt;12 且 &lt;13</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原因： 报错 &quot;找不到 mix 命令&quot; 是因为你在执行 RabbitMQ 的编译过程中缺少了 Elixir 环境，而 RabbitMQ 的一些组件可能使用了 Elixir 语言</span><br><span class="line">解决：下载编译安装elixir</span><br><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;elixir-lang&#x2F;elixir</span><br><span class="line">下载对应版本之后：</span><br><span class="line">unzip .&#x2F;elixir-1.12.3.zip</span><br><span class="line">cd .&#x2F;elixir-1.12.3</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"># Ps:需要注意的是编译安装的rabbitmq版本与elixir的版本之间有依赖关系，如：rabbitmq-3.9.13 版本需要elixir的版本 &gt;12 且 &lt;13</span><br></pre></td></tr></table></figure>
 
 <p><strong>3、rsync: command not found报错</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install rsync -y</span><br></pre></td></tr></table></figure>
@@ -78,6 +95,12 @@
 
 <p><strong>6、you may need to install the CPAN module</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;metacpan.org&#x2F;dist&#x2F;CPAN</span><br><span class="line">tar -zxvf .&#x2F;CPAN-2.36.tar.gz</span><br><span class="line">cd .&#x2F;CPAN-2.36</span><br><span class="line">perl5.28.3 Makefile.PL</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p><strong>7、 make 报错如下：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gen&#x2F;wxe_funcs.cpp: In member function ‘void WxeApp::wxe_dispatch(wxeCommand&amp;)’:</span><br><span class="line">gen&#x2F;wxe_funcs.cpp:8289:45: error: taking address of temporary [-fpermissive]</span><br><span class="line">  const wxBitmap * Result &#x3D; &amp;This-&gt;GetBitmap();</span><br><span class="line">                                             ^</span><br><span class="line">gen&#x2F;wxe_funcs.cpp:8495:101: error: call of overloaded ‘AddTool(int&amp;, wxString&amp;, wxBitmap&amp;, wxString&amp;, wxItemKind&amp;)’ is ambiguous</span><br><span class="line">  wxToolBarToolBase * Result &#x3D; (wxToolBarToolBase*)This-&gt;AddTool(*toolid,label,*bitmap,shortHelp,kind);</span><br><span class="line">                                                                                                     ^</span><br><span class="line">gen&#x2F;wxe_funcs.cpp:8495:101: note: candidates are:</span><br><span class="line">In file included from &#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;toolbar.h:67:0,</span><br><span class="line">                 from &#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;wx.h:87,</span><br><span class="line">                 from gen&#x2F;wxe_funcs.cpp:23:</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;tbarbase.h:311:24: note: wxToolBarToolBase* wxToolBarBase::AddTool(int, const wxString&amp;, const wxBitmapBundle&amp;, const wxString&amp;, wxItemKind)</span><br><span class="line">     wxToolBarToolBase *AddTool(int toolid,</span><br><span class="line">                        ^</span><br><span class="line">In file included from &#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;wx.h:14:0,</span><br><span class="line">                 from gen&#x2F;wxe_funcs.cpp:23:</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;tbarbase.h:527:24: note: wxToolBarToolBase* wxToolBarBase::AddTool(int, const wxBitmap&amp;, const wxBitmap&amp;, bool, wxCoord, wxCoord, wxObject*, const wxString&amp;, const wxString&amp;)</span><br><span class="line">     wxToolBarToolBase *AddTool(int toolid,</span><br><span class="line">                        ^</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;defs.h:675:43: note: in definition of macro ‘wxDEPRECATED’</span><br><span class="line"> #define wxDEPRECATED(x) wxDEPRECATED_DECL x</span><br><span class="line">                                           ^</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;include&#x2F;wx-3.2&#x2F;wx&#x2F;tbarbase.h:526:5: note: in expansion of macro ‘wxDEPRECATED_INLINE’</span><br><span class="line">     wxDEPRECATED_INLINE(</span><br><span class="line">     ^</span><br><span class="line">make[3]: *** [aarch64-unknown-linux-gnu&#x2F;wxe_funcs.o] Error 1</span><br><span class="line">make[3]: *** Waiting for unfinished jobs....</span><br><span class="line">make[3]: Leaving directory &#96;&#x2F;apps&#x2F;temp-lzh&#x2F;build-rabbitmq&#x2F;otp_src_23.3.4.11&#x2F;lib&#x2F;wx&#x2F;c_src&#39;</span><br><span class="line">make[2]: *** [opt] Error 2</span><br><span class="line">make[2]: Leaving directory &#96;&#x2F;apps&#x2F;temp-lzh&#x2F;build-rabbitmq&#x2F;otp_src_23.3.4.11&#x2F;lib&#x2F;wx&#39;</span><br><span class="line">make[1]: *** [opt] Error 2</span><br><span class="line">make[1]: Leaving directory &#96;&#x2F;apps&#x2F;temp-lzh&#x2F;build-rabbitmq&#x2F;otp_src_23.3.4.11&#x2F;lib&#39;</span><br><span class="line">make: *** [libs] Error 2</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决方法：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">查看.&#x2F;HOWTO&#x2F;INSTALL.md文件里面关于“ Building with wxErlang ”的说明部分,下载对应版本的wx包</span><br><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;wxWidgets&#x2F;wxWidgets&#x2F;releases&#x2F;download&#x2F;v3.0.3&#x2F;wxWidgets-3.0.3.tar.bz2</span><br><span class="line">bzip2 -dkv .&#x2F;wxWidgets-3.0.3.tar.bz2</span><br><span class="line">tar -xvf .&#x2F;wxWidgets-3.0.3.tar</span><br><span class="line">cd .&#x2F;wxWidgets-3.0.3</span><br><span class="line">.&#x2F;configure --build&#x3D;arm-linux</span><br><span class="line">make -j 4 &amp;&amp; make install</span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
@@ -95,8 +118,8 @@
 <h3 id="二、df-命令底层原理"><a href="#二、df-命令底层原理" class="headerlink" title="二、df 命令底层原理"></a>二、df 命令底层原理</h3><p>df命令的底层调用过程依次如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev() -&gt; get_fs_usage() -&gt; statvfs_works() -&gt; statvfs()&#x2F;statfs()</span><br></pre></td></tr></table></figure>
 
-<p>其中，main() -&gt; get_entry()/get_all_entries() -&gt; get_point() -&gt; get_dev()这些函数都是在coreutils工程的df.c文件，地址： git://git.savannah.gnu.org/coreutils.git，路径：coreutils/src/df.c</p>
-<p>get_fs_usage() -&gt; statvfs_works() 是在 gnulib工程的fsusage.c文件，地址：<a href="https://github.com/coreutils/gnulib.git" target="_blank" rel="noopener">https://github.com/coreutils/gnulib.git</a> ， 路径：gnulib-master/lib/fsusage.c </p>
+<p>其中，main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev()这些函数都是在coreutils工程的df.c文件，地址： git:&#x2F;&#x2F;git.savannah.gnu.org&#x2F;coreutils.git，路径：coreutils&#x2F;src&#x2F;df.c</p>
+<p>get_fs_usage() -&gt; statvfs_works() 是在 gnulib工程的fsusage.c文件，地址：<a href="https://github.com/coreutils/gnulib.git" target="_blank" rel="noopener">https://github.com/coreutils/gnulib.git</a> ， 路径：gnulib-master&#x2F;lib&#x2F;fsusage.c </p>
 <p>get_entry()如下：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Determine what kind of node NAME is and show the device usage</span></span><br><span class="line"><span class="comment">   for it.  STATP is the results of 'stat' on NAME.  */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">get_entry (<span class="keyword">char</span> <span class="keyword">const</span> *name, struct stat <span class="keyword">const</span> *statp)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ((S_ISBLK (statp-&gt;st_mode) || S_ISCHR (statp-&gt;st_mode))</span><br><span class="line">      &amp;&amp; get_device (name))</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  get_point (name, statp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -114,14 +137,14 @@
 
 <p>statvfs_works()函数通过获取当前内核的版本判断是否支持statvfs()方法，内核版本大于2.6.36则判断支持。</p>
 <h3 id="三、Ansible的setup模块原理"><a href="#三、Ansible的setup模块原理" class="headerlink" title="三、Ansible的setup模块原理"></a>三、Ansible的setup模块原理</h3><p>ansible内核源码地址：<a href="https://github.com/ansible/ansible.git" target="_blank" rel="noopener">https://github.com/ansible/ansible.git</a></p>
-<p>路径：ansible/lib/ansible/module_utils/facts/utils.py</p>
+<p>路径：ansible&#x2F;lib&#x2F;ansible&#x2F;module_utils&#x2F;facts&#x2F;utils.py</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_mount_size</span><span class="params">(mountpoint)</span>:</span></span><br><span class="line">    mount_size = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        statvfs_result = os.statvfs(mountpoint)</span><br><span class="line">        mount_size[<span class="string">'size_total'</span>] = statvfs_result.f_frsize * statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'size_available'</span>] = statvfs_result.f_frsize * (statvfs_result.f_bavail)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Block total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'block_size'</span>] = statvfs_result.f_bsize</span><br><span class="line">        mount_size[<span class="string">'block_total'</span>] = statvfs_result.f_blocks</span><br><span class="line">        mount_size[<span class="string">'block_available'</span>] = statvfs_result.f_bavail</span><br><span class="line">        mount_size[<span class="string">'block_used'</span>] = mount_size[<span class="string">'block_total'</span>] - mount_size[<span class="string">'block_available'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Inode total/available/used</span></span><br><span class="line">        mount_size[<span class="string">'inode_total'</span>] = statvfs_result.f_files</span><br><span class="line">        mount_size[<span class="string">'inode_available'</span>] = statvfs_result.f_favail</span><br><span class="line">        mount_size[<span class="string">'inode_used'</span>] = mount_size[<span class="string">'inode_total'</span>] - mount_size[<span class="string">'inode_available'</span>]</span><br><span class="line">    <span class="keyword">except</span> OSError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mount_size</span><br></pre></td></tr></table></figure>
 
 <p>上述为获取磁盘使用情况的代码，可以看到使用了os.ststvfs()库函数</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">os.statvfs(path):</span><br><span class="line"></span><br><span class="line">Perform a statvfs() system call on the given path. The return value is an object whose attributes describe the filesystem on the given path, and correspond to the members of the statvfs structure, namely: f_bsize, f_frsize, f_blocks, f_bfree, f_bavail, f_files, f_ffree, f_favail, f_flag, f_namemax.</span><br><span class="line">返回内容说明如下：</span><br><span class="line">f_bsize: 文件系统块大小</span><br><span class="line">f_frsize: 分栈大小</span><br><span class="line">f_blocks: 文件系统数据块总数</span><br><span class="line">f_bfree: 可用块数</span><br><span class="line">f_bavail:非超级用户可获取的块数</span><br><span class="line">f_files: 文件结点总数</span><br><span class="line">f_ffree: 可用文件结点数</span><br><span class="line">f_favail: 非超级用户的可用文件结点数</span><br><span class="line">f_fsid: 文件系统标识 ID</span><br><span class="line">f_flag: 挂载标记</span><br><span class="line">f_namemax: 最大文件长度</span><br></pre></td></tr></table></figure>
 
 <p>可以看到setup模块最终调用的是statvfs()系统函数，并且可用磁盘大小、磁盘总大小等都是通过计算得来。</p>
-<h3 id="四、statfs-与statvfs"><a href="#四、statfs-与statvfs" class="headerlink" title="四、statfs()与statvfs()"></a>四、statfs()与statvfs()</h3><p>借用<a href="https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：" target="_blank" rel="noopener">https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：</a></p>
+<h3 id="四、statfs-与statvfs"><a href="#四、statfs-与statvfs" class="headerlink" title="四、statfs()与statvfs()"></a>四、statfs()与statvfs()</h3><p>借用<a href="https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls%E8%BF%99%E4%B8%80%E5%9B%9E%E7%AD%94%E4%B8%AD%E7%9A%84%E8%AF%B4%E6%B3%95%EF%BC%9A" target="_blank" rel="noopener">https://stackoverflow.com/questions/1653163/difference-between-statvfs-and-statfs-system-calls这一回答中的说法：</a></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">Q：Why do the statfs() and statvfs() calls both exist when they&#39;re so similar?Under what circumstances would I prefer one over the other?</span><br><span class="line"></span><br><span class="line">A：</span><br><span class="line">Originally 4.4BSD defined a statfs() call. Linux later implemented a slightly different call with the same name. Posix standardized it between all freenix and Unix versions by defining statvfs().</span><br><span class="line"></span><br><span class="line">statfs() is OS-specific</span><br><span class="line"></span><br><span class="line">statvfs() is posix-conforming</span><br><span class="line"></span><br><span class="line">As they all return slightly different structures, later ones to come along can&#39;t replace the first.</span><br><span class="line"></span><br><span class="line">In general you should use statvfs(), the Posix one. Be careful about &quot;use Posix&quot; advice, though, as in some cases (pty, for example) the BSD (or whatever) one is more portable in practice.</span><br></pre></td></tr></table></figure>
 
 <p>也即是说这两个函数作用相同，之所以有两个是由于历史与标准原因。最开始的4.4BSD定义的是ststfs()函数，Linux内核后来实现了一个略微有所不同，但是名字也叫这个的函数，这两个statfs()函数返回的内容的数据结构有所不同。后来Posix想要实现freenix与Unix的标准化，于是定义了ststvfs()函数。简单来说就是statfs()函数是针对系统来说的，Unix有一个，Linux也有一个；而statvfs()函数则是符合Posix规范的。</p>
@@ -141,21 +164,21 @@
     <url>/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，<a id="more"></a>一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
 <p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png"></p>
 <p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psef.jpeg" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psef.jpeg"></p>
 <p>很明显，也没有什么发现，于是他觉得这可能是某个僵尸进程所有。由于linux系统中，如果一个进程成为僵尸进程之后，用ps命令查看时，该进程的状态栏会被标记为<strong>defunct</strong>，于是他试图用ps命令查找服务器上的僵尸进程：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psaux.png" alt=""></p>
-<p>但是很遗憾，还是没有什么发现，甚至通过*<em>lsof -i:port *</em>命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/telnet.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/psaux.png"></p>
+<p>但是很遗憾，还是没有什么发现，甚至通过**lsof -i:port **命令试图查看占用端口中启动的程序也未果。菜鸟运维小L到这里已经用完了他的常规思路，所以开始认真研究了。他先是用telnet命令查看这个端口到死能不能连接，毕竟如此诡异：</p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/telnet.png"></p>
 <p>端口是通的，说明有后台是有一个正常进程在处理它，所以小L开始慌张了，他下一步想确认到底是不是某些不知名人物所为。如果是不知名人物所为，那大概了会有网络连接的，所以小L用了ss命令：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/ss.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/ss.png"></p>
 <p>还好，通过20090端口只有一个处于ESTAB状态的连接，这是他自己telnet的结果，他稍稍心安。但是这个进程到底是谁建立的呢？小L同学走投无路之下，只好尝试笨办法–直接全局搜索端口号：</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/grep.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/grep.png"></p>
 <p>还真让他找出来了一些东西，但是很遗憾，这并不是他要的结果，只是服务器上部署的普罗米修斯程序的日志里面有数据刚好匹配上了20090这个字符串。小L同学继续在网络的海洋里游啊游，还真让他找到了一些东西。</p>
 <p><strong>rpcinfo</strong>工具可以显示所有使用<strong>portmap</strong>注册的程序的信息。rpcinfo -p x.x.x.x 可以基于rpc协议访问服务器，通过服务器返回的响应信息探测主机x.x.x.x上已经注册的rpc服务的信息。</p>
 <p><strong>portmap</strong> 是一个rpc端口映射程序，最初由 Sun 公司开发，它可以将 rpc 程序号映射到网络上的端口号。rpc进程在启动时通知 portmap，显示它们正在监视的端口号以及它们提供服务的 rpc 程序号，然后客户端系统使用特定的 rpc 程序编号联系服务器上的端口映射服务（portmap），然后 portmap 再将客户端重定向到正确的端口号以与其预期的服务进行通信。</p>
-<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/rpcinfo.png" alt=""></p>
+<p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/rpcinfo.png"></p>
 <p>可以看到，让小L同学备受困扰的20090端口赫然在列！但是这个<strong>nlockmgr</strong>服务是个什么呢？</p>
 <p>nlockmgr是在NFS中用来管理文件的锁定的，防止多个客户端同时写入某个文件是产生冲突。</p>
 <p>NFS服务需要开启 mountd,nfs,nlockmgr,portmapper,rquotad这5个服务，其中nfs、portmapper的端口是固定的，另外三个服务的端口是随机分配的，也可以给mountd,nlockmgr,rquotad设置固定的端口。具体方法很简单，也不再赘述，问问神奇的搜索引擎吧。</p>
@@ -174,7 +197,7 @@
     <title>Jmeter基本使用与常见性能瓶颈</title>
     <url>/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h2 id="Jmeter基本使用与常见性能瓶颈"><a href="#Jmeter基本使用与常见性能瓶颈" class="headerlink" title="Jmeter基本使用与常见性能瓶颈"></a>Jmeter基本使用与常见性能瓶颈</h2><h3 id="一、什么是Jmeter"><a href="#一、什么是Jmeter" class="headerlink" title="一、什么是Jmeter"></a>一、什么是Jmeter</h3><p><a href="https://jmeter.apache.org/" target="_blank" rel="noopener">官网链接</a></p>
-<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/小服务程序/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，<a id="more"></a>在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能/<a href="https://baike.baidu.com/item/回归测试/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/使用正则表达式/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
+<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/%E5%B0%8F%E6%9C%8D%E5%8A%A1%E7%A8%8B%E5%BA%8F/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，<a id="more"></a>在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能&#x2F;<a href="https://baike.baidu.com/item/%E5%9B%9E%E5%BD%92%E6%B5%8B%E8%AF%95/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/%E4%BD%BF%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
 <h3 id="二、Jmeter中的相关概念"><a href="#二、Jmeter中的相关概念" class="headerlink" title="二、Jmeter中的相关概念"></a>二、Jmeter中的相关概念</h3><ol>
 <li>线程：一个线程可以理解为一个虚拟用户。比如10个线程表示有10个用户不间断发起请求，也可以理解为<strong>并发数</strong></li>
 <li>线程组：测试的起点。一个测试计划必须包含至少一个线程组，其余所有组件都必须在线程组下</li>
@@ -185,12 +208,12 @@
 <h3 id="三、压力测试过程"><a href="#三、压力测试过程" class="headerlink" title="三、压力测试过程"></a>三、压力测试过程</h3><p>本小节以单一请求为例，描述压力测试设置请求参数、查看测试结果的过程</p>
 <ol>
 <li>从官网下载jmeter，解压缩</li>
-<li>Windows下打开bin/jmeter.cmd</li>
+<li>Windows下打开bin&#x2F;jmeter.cmd</li>
 <li>新建测试计划与线程组。打开后默认已建立一个测试计划，右击测试计划根据需要新建线程组，一般选择“setUp Thread Group（常规线程组）”或“Stepping Thread Group（阶梯测试线程组）”</li>
 <li>右击线程组根据需要新建取样器（设置请求参数的地方），一般我们是新建HTTP Request</li>
 <li>右击线程组，根据需要查看的指标新建监听器，一般结果树（view Result Tree）和聚合报告（Summary Report）是必需的，前者可以看到jmeter发出的每个请求的响应情况，后者可以在生成实时汇总报告</li>
 </ol>
-<p><img src="https://img-blog.csdnimg.cn/f5c9c5f794cc49c99c8aff44b562b334.png#pic_center" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/f5c9c5f794cc49c99c8aff44b562b334.png#pic_center"></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#线程组参数说明</span><br><span class="line">- 线程数： 同时发起的请求数。如线程数为10表示用10个线程模拟10个用户发起请求</span><br><span class="line">- Ramp-Up时间： 多长时间内启动完全部线程</span><br><span class="line">- 循环次数：每个线程循环请求的次数，设置为永远则所有线程持续不间断请求</span><br><span class="line">- 持续时间： 测试请求的时间</span><br><span class="line">- 启动延迟： 单一脚本时用不上。此参数表示当有多个jmeter脚本时，间隔多长时间启动下一脚本</span><br></pre></td></tr></table></figure>
 
 <ol start="6">
@@ -205,28 +228,28 @@
 <h3 id="四、测试结果查看"><a href="#四、测试结果查看" class="headerlink" title="四、测试结果查看"></a>四、测试结果查看</h3><ol>
 <li>测试过程中的实时查看：</li>
 </ol>
-<p><img src="https://img-blog.csdnimg.cn/3c8cad8b6b23484da23f3cb1e4f2d978.png#pic_center" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/3c8cad8b6b23484da23f3cb1e4f2d978.png#pic_center"></p>
 <p>在命令行执行脚本测试过程中，会看到以上页面。</p>
 <ul>
-<li>“summary +”表示测试过程中的变化量，“summary =”所在的行才是我们需要关注的测试结果，其后跟的数字代表发送请求的数量</li>
+<li>“summary +”表示测试过程中的变化量，“summary &#x3D;”所在的行才是我们需要关注的测试结果，其后跟的数字代表发送请求的数量</li>
 <li>in 后面跟的是时间</li>
-<li>= 后面跟的是吞吐量，可以近似看作QPS、TPS</li>
+<li>&#x3D; 后面跟的是吞吐量，可以近似看作QPS、TPS</li>
 <li>Avg、Min、Max 表示请求响应的平均时间、最小时间、最大时间</li>
 <li>Err 后面跟的是错误请求的数量与百分比</li>
 <li>Active、Started、Finished表示线程数</li>
 </ul>
 <p>如前三行可以解读为：</p>
 <ul>
-<li>在前23秒的时候发起了767次请求，TPS为33.3/s，平均响应时间为5724ms，最小响应时间为142ms，最大响应时间为22562ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
-<li>在其后的30s內，共发起1212次请求，这30s內TPS为40.4/s，平均响应时间为12531ms，最小响应时间为394ms，最大响应时间为49573ms，此过程中共有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
+<li>在前23秒的时候发起了767次请求，TPS为33.3&#x2F;s，平均响应时间为5724ms，最小响应时间为142ms，最大响应时间为22562ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
+<li>在其后的30s內，共发起1212次请求，这30s內TPS为40.4&#x2F;s，平均响应时间为12531ms，最小响应时间为394ms，最大响应时间为49573ms，此过程中共有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
 <li>总结以上，在前53s时间内，共发起1979次请求，TPS为37.3，平均响应时间为9893ms，最小响应时间为142ms，最大响应时间为49573ms，此时有0个错误请求，错误请求所占比例为0%，此时启动的线程数是500个，活跃的线程数是500个，已经结束的线程数为0个</li>
 </ul>
 <ol start="2">
 <li><p>测试结束后将结果文件（jtl文件）导入到jmeter图形界面：</p>
-<p>结果树：<br><img src="https://img-blog.csdnimg.cn/fb7549fb276b40f28d6b786687f7d759.png#pic_center" alt=""></p>
+<p>结果树：<br><img src="https://img-blog.csdnimg.cn/fb7549fb276b40f28d6b786687f7d759.png#pic_center"></p>
 <p>结果树可以看到每个请求的响应情况</p>
 <p>聚合报告：</p>
-<p><img src="https://img-blog.csdnimg.cn/c589751702a7418f80f306053020509d.png#pic_center" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/c589751702a7418f80f306053020509d.png#pic_center"></p>
 <p>聚合报告可以看到发起的总请求数、平均响应时间、响应时间的中位数、90%的请求在多长时间内完成响应、95%的请求在多长时间内完成响应、99%的请求在多长时间内完成响应、响应时间的最大值、响应时间的最小值、异常请求所占的比例、吞吐量（TPS）以及发送、接受数据的速度</p>
 </li>
 </ol>
@@ -240,15 +263,13 @@
  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();</span><br></pre></td></tr></table></figure>
 
 <p>或直接在jmx文件中与”ResultCollector“平级的层加入：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;BeanShellPostProcessor guiclass&#x3D;&quot;TestBeanGUI&quot; testclass&#x3D;&quot;BeanShellPostProcessor&quot; testname&#x3D;&quot;BeanShell PostProcessor&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;filename&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;parameters&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;resetInterpreter&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;script&quot;&gt;import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;BeanShellPostProcessor&gt;</span><br></pre></td></tr></table></figure>
-
-</li>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;BeanShellPostProcessor guiclass&#x3D;&quot;TestBeanGUI&quot; testclass&#x3D;&quot;BeanShellPostProcessor&quot; testname&#x3D;&quot;BeanShell PostProcessor&quot; enabled&#x3D;&quot;true&quot;&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;filename&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;parameters&quot;&gt;&lt;&#x2F;stringProp&gt;</span><br><span class="line">          &lt;boolProp name&#x3D;&quot;resetInterpreter&quot;&gt;false&lt;&#x2F;boolProp&gt;</span><br><span class="line">          &lt;stringProp name&#x3D;&quot;script&quot;&gt;import java.io.*;</span><br><span class="line"> </span><br><span class="line">import java.util.UUID;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;获取上个请求的返回数据</span><br><span class="line"> </span><br><span class="line">byte[] result &#x3D; prev.getResponseData();</span><br><span class="line"> </span><br><span class="line">&#x2F;&#x2F;要下载到什么地方</span><br><span class="line"> </span><br><span class="line">String file_name &#x3D; &quot;\\apps\\temp\\downloads\\&quot;+UUID.randomUUID().toString()+&quot;.jpg&quot;;</span><br><span class="line"> </span><br><span class="line">File file &#x3D; new File(file_name);</span><br><span class="line"> </span><br><span class="line">FileOutputStream out &#x3D; new FileOutputStream(file);</span><br><span class="line"> </span><br><span class="line">out.write(result);</span><br><span class="line"> </span><br><span class="line">out.close();&lt;&#x2F;stringProp&gt;</span><br><span class="line">        &lt;&#x2F;BeanShellPostProcessor&gt;</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h3 id="五、常见的性能瓶颈"><a href="#五、常见的性能瓶颈" class="headerlink" title="五、常见的性能瓶颈"></a>五、常见的性能瓶颈</h3><ul>
 <li>网络带宽（尤其是压测请求的请求体或响应体较大的时候尤为明显）</li>
 <li>磁盘IO（与之相关的是nginx、程序的日志级别）</li>
 <li>JVM参数</li>
-<li>网络参数（/etc/ sysctl.conf）</li>
+<li>网络参数（&#x2F;etc&#x2F; sysctl.conf）</li>
 </ul>
 ]]></content>
       <categories>
@@ -267,12 +288,12 @@
 <li>short</li>
 <li>int</li>
 <li>long</li>
-<li>long long （short &lt;= int &lt;= long &lt;= long long）</li>
+<li>long long （short &lt;&#x3D; int &lt;&#x3D; long &lt;&#x3D; long long）</li>
 <li>float</li>
 <li>double</li>
 <li>long double</li>
 <li>char：一个char类型的大小跟一个机器字节一样（与机器有关）</li>
-<li>unsigned （各种无符号数 &gt;= 0，循环条件需注意）</li>
+<li>unsigned （各种无符号数 &gt;&#x3D; 0，循环条件需注意）</li>
 <li>bool</li>
 </ul>
 <h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
@@ -316,7 +337,7 @@
 </li>
 <li><p>补码：有符号正整数的补码等于原码；负整数的补码为反码+1</p>
 <p><strong>总结：</strong></p>
-<p><strong>有符号正整数原码=反码=补码</strong></p>
+<p><strong>有符号正整数原码&#x3D;反码&#x3D;补码</strong></p>
 <p><strong>有符号负整数反码等于原码除符号位不变外，其余每一位取反；补码等于原码除符号位不变外，其余每一位取反再加1</strong></p>
 </li>
 </ul>
@@ -343,7 +364,7 @@
   <entry>
     <title>服务器SSH被字典爆破时记录密码</title>
     <url>/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="../../../../../../image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
+    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="/../../../../../../image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
 <p>在网上找到了两种方法：一种是通过patch，也就是打补丁的方式。因为默认的ssh日志是不带密码记录功能的，于是可以重新编译openssh并打上补丁，使它能够记录，但尝试之后这种方法并没有成功，因为在打补丁的过程中报如下错误：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">patch --dry-run &lt; syslog.patch</span><br><span class="line">checking file auth-passwd.c </span><br><span class="line">patch: **** malformed patch at line 4: &#123;</span><br></pre></td></tr></table></figure>
 
@@ -356,14 +377,14 @@
 <p>5、修改源码</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#进入解压目录</span><br><span class="line">cd .&#x2F;openssh-8.4p1</span><br><span class="line"></span><br><span class="line">#编辑auth-passwd.c文件</span><br><span class="line">vim .&#x2F;auth-passwd.c</span><br><span class="line"></span><br><span class="line">#找到函数auth_password，添加以下代码</span><br><span class="line">logit(&quot;username: %s password: %s&quot;, authctxt-&gt;user, password);</span><br></pre></td></tr></table></figure>
 
-<p><img src="../../../../../../image/2020/11/10/auth-passwd.png" alt="修改后的源码"></p>
+<p><img src="/../../../../../../image/2020/11/10/auth-passwd.png" alt="修改后的源码"></p>
 <p>6、编译安装</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#编译</span><br><span class="line"> .&#x2F;configure --sysconfdir&#x3D;&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;conf&#x2F; --without-zlib-version-check --with-md5-passwords --prefix&#x3D;&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;</span><br><span class="line"></span><br><span class="line">#参数说明</span><br><span class="line">--sysconfdir #配置文件目录</span><br><span class="line">--without-zlib-version-check</span><br><span class="line">--with-md5-passwords</span><br><span class="line">--prefix #安装目录</span><br><span class="line"></span><br><span class="line">(Ps:此命令完成时会显示配置文件位置和安装位置，后面需要用到配置文件位置)</span><br><span class="line"></span><br><span class="line">#make &amp;&amp; make install</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
 
 <p>7、登录测试，查看日志</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#修改配置文件</span><br><span class="line">sudo vim &#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;conf&#x2F;sshd_config</span><br><span class="line"></span><br><span class="line">#修改ssh端口</span><br><span class="line">Port 1234</span><br><span class="line"></span><br><span class="line">#禁止root用户登录</span><br><span class="line">PermitRootLogin no</span><br><span class="line"></span><br><span class="line">#启动(必须使用绝对路径，这跟ssh服务自身有关)</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;ssh8.4p1&#x2F;sbin&#x2F;sshd</span><br><span class="line">#如果启动失败请查看之前是否有安装openssh</span><br><span class="line"></span><br><span class="line">#连接（如果连接不上请检查防火墙，查看端口是否开放）</span><br><span class="line">ssh -p 1234 xxx@xxx.xxx.xxx.xxx</span><br><span class="line"></span><br><span class="line">#查看日志</span><br><span class="line">sudo grep username &#x2F;var&#x2F;log&#x2F;secure</span><br></pre></td></tr></table></figure>
 
-<p><img src="../../../../../../image/2020/11/10/log.png" alt="效果"><br>可以看到显示结果还是不够纯粹，还有一些其他信息，如果想要看到更纯粹的显示内容，可以再次利用管道符和grep进行过滤<br><code>sudo grep username /var/log/secure | grep password | grep sshd</code></p>
+<p><img src="/../../../../../../image/2020/11/10/log.png" alt="效果"><br>可以看到显示结果还是不够纯粹，还有一些其他信息，如果想要看到更纯粹的显示内容，可以再次利用管道符和grep进行过滤<br><code>sudo grep username /var/log/secure | grep password | grep sshd</code></p>
 <p>（Ps：这里顺便记录一下，管道符的作用是将管道符前命令的输出作为管道符后命令的输入）</p>
 <h5 id="到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来"><a href="#到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来" class="headerlink" title="到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来"></a>到这里爆破密码的记录已经完成，要想构建自己的密码字典还得将密码提取出来</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#首先新建保存密码的文件</span><br><span class="line">touch .&#x2F;dir.txt</span><br><span class="line"></span><br><span class="line">#使用grep与awk将内容提取出来</span><br><span class="line">sudo cat &#x2F;var&#x2F;log&#x2F;secure | grep -v &#39;你的用户名&#39; | grep -v &#39;你的密码&#39; | grep &#39;password:&#39; |grep &#39;username:&#39; |grep &#39;sshd&#39;| awk -F &#39; &#39; &#39;&#123;print $7,$9&#125;&#39;&gt;&gt;dir.txt</span><br></pre></td></tr></table></figure>
 
@@ -388,7 +409,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#新建定时任务</span><br><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">#输入如下</span><br><span class="line">0 0 *&#x2F;3 * * auto.sh脚本所在位置的绝对路径&#x2F;auto.sh</span><br><span class="line"></span><br><span class="line">#查看定时任务是否创建成功</span><br><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
 
 <p>上述命令的意思是每隔三天，在零点零分的时候定期执行auto.sh脚本（crontab命令的具体用法可自行百度或google）</p>
-<p>新建任务格式详解（/etc/crontab）</p>
+<p>新建任务格式详解（&#x2F;etc&#x2F;crontab）</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># For details see man 4 crontabs</span><br><span class="line"></span><br><span class="line"># Example of job definition:</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday&#x3D;0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></table></figure>
 
 <p>至此全部过程就结束了，接下来就可以等着自己密码字典的成型啦！！！！</p>
@@ -410,7 +431,7 @@
 <p>21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。<a id="more"></a>备考期间不定时更新（其实是不想复习了就更新hahahhahaha），内容随缘。可能是技术类文章，也可能是读后感、感悟之类的。备考期间会着重复习数据结构、算法、C++，刷力扣之类的，所以未来一段时间可能算法类多一点。另外，会抽空看一点系统介绍Linux的电子书（虽然Linux是我目前的主系统，但不得不说，我对它缺乏系统性的了解，很难深入….）。考试之后有想法入坑CTF（其实是想入坑很久了，苦于….），到时候也会更新自己的学习感悟。</p>
 <p>如果有大神发现我的博客有误，可以通过以下方式联系我改正，万分感激：</p>
 <ul>
-<li>email:<a href="mailto:komorebilzh@gmail.com">komorebilzh@gmail.com</a></li>
+<li>email:<a href="mailto:&#x6b;&#x6f;&#x6d;&#x6f;&#114;&#x65;&#x62;&#105;&#108;&#122;&#x68;&#64;&#103;&#x6d;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;">komorebilzh@gmail.com</a></li>
 <li>QQ:3360207672</li>
 <li>twitter:<a href="https://twitter.com/messages" target="_blank" rel="noopener">→_→</a></li>
 </ul>
