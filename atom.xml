@@ -6,7 +6,7 @@
   <link href="http://t-l-t.github.io/atom.xml" rel="self"/>
   
   <link href="http://t-l-t.github.io/"/>
-  <updated>2025-02-10T11:58:30.559Z</updated>
+  <updated>2025-02-10T12:10:02.301Z</updated>
   <id>http://t-l-t.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Follow订阅源认证</title>
+    <link href="http://t-l-t.github.io/2025/02/10/Follow%E8%AE%A2%E9%98%85%E6%BA%90%E8%AE%A4%E8%AF%81/"/>
+    <id>http://t-l-t.github.io/2025/02/10/Follow%E8%AE%A2%E9%98%85%E6%BA%90%E8%AE%A4%E8%AF%81/</id>
+    <published>2025-02-10T12:09:00.000Z</published>
+    <updated>2025-02-10T12:10:02.301Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;This message is used to verify that this feed (feedId:111743529793638400) belongs to me (userId:111624505845604352). Join me in enjoying</summary>
+        
+      
+    
+    
+    
+    <category term="about" scheme="http://t-l-t.github.io/categories/about/"/>
+    
+    
+    <category term="about" scheme="http://t-l-t.github.io/tags/about/"/>
+    
+  </entry>
   
   <entry>
     <title>编译安装MongoDB（含gcc环境）</title>

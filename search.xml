@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Follow订阅源认证</title>
+    <url>/2025/02/10/Follow%E8%AE%A2%E9%98%85%E6%BA%90%E8%AE%A4%E8%AF%81/</url>
+    <content><![CDATA[<p>This message is used to verify that this feed (feedId:111743529793638400) belongs to me (userId:111624505845604352). Join me in enjoying the next generation information browser <a href="https://follow.is/" target="_blank" rel="noopener">https://follow.is</a>.</p>
+]]></content>
+      <categories>
+        <category>about</category>
+      </categories>
+      <tags>
+        <tag>about</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>编译安装MongoDB（含gcc环境）</title>
     <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/</url>
     <content><![CDATA[<h2 id="编译安装MongoDB（含gcc环境）"><a href="#编译安装MongoDB（含gcc环境）" class="headerlink" title="编译安装MongoDB（含gcc环境）"></a>编译安装MongoDB（含gcc环境）</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）</p>
@@ -431,7 +443,7 @@
 <p>21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。备考期间不定时更新（其实是不想复习了就更新hahahhahaha），内容随缘。可能是技术类文章，也可能是读后感、感悟之类的。备考期间会着重复习数据结构、算法、C++，刷力扣之类的，所以未来一段时间可能算法类多一点。另外，会抽空看一点系统介绍Linux的电子书（虽然Linux是我目前的主系统，但不得不说，我对它缺乏系统性的了解，很难深入….）。考试之后有想法入坑CTF（其实是想入坑很久了，苦于….），到时候也会更新自己的学习感悟。</p>
 <p>如果有大神发现我的博客有误，可以通过以下方式联系我改正，万分感激：</p>
 <ul>
-<li>email:<a href="mailto:&#x6b;&#x6f;&#x6d;&#111;&#114;&#101;&#98;&#105;&#108;&#x7a;&#104;&#x40;&#103;&#109;&#x61;&#105;&#x6c;&#x2e;&#x63;&#111;&#109;">komorebilzh@gmail.com</a></li>
+<li>email:<a href="mailto:&#107;&#x6f;&#x6d;&#111;&#x72;&#101;&#x62;&#105;&#x6c;&#122;&#104;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#99;&#x6f;&#109;">komorebilzh@gmail.com</a></li>
 <li>QQ:3360207672</li>
 <li>twitter:<a href="https://twitter.com/messages" target="_blank" rel="noopener">→_→</a></li>
 </ul>
