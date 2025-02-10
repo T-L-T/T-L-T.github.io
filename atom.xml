@@ -91,9 +91,9 @@
     <category term="Ansible" scheme="http://t-l-t.github.io/categories/Ansible/"/>
     
     
-    <category term="linux" scheme="http://t-l-t.github.io/tags/linux/"/>
-    
     <category term="Ansible" scheme="http://t-l-t.github.io/tags/Ansible/"/>
+    
+    <category term="linux" scheme="http://t-l-t.github.io/tags/linux/"/>
     
     <category term="Devops" scheme="http://t-l-t.github.io/tags/Devops/"/>
     
@@ -122,9 +122,9 @@
     <category term="linux命令" scheme="http://t-l-t.github.io/categories/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/linux%E5%91%BD%E4%BB%A4/"/>
     
     
-    <category term="运维经验" scheme="http://t-l-t.github.io/tags/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/"/>
-    
     <category term="linux" scheme="http://t-l-t.github.io/tags/linux/"/>
+    
+    <category term="运维经验" scheme="http://t-l-t.github.io/tags/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/"/>
     
     <category term="linux命令" scheme="http://t-l-t.github.io/tags/linux%E5%91%BD%E4%BB%A4/"/>
     
@@ -253,7 +253,7 @@
     <link href="http://t-l-t.github.io/2020/07/24/About/"/>
     <id>http://t-l-t.github.io/2020/07/24/About/</id>
     <published>2020-07-24T15:04:32.000Z</published>
-    <updated>2025-02-10T11:58:30.544Z</updated>
+    <updated>2025-02-10T12:02:16.201Z</updated>
     
     
       
