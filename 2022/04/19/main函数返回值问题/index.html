@@ -149,7 +149,7 @@ var _hmt = _hmt || [];
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：<a id="more"></a></p>
+  <h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"sssss"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>编译运行之后使用 ”echo $?“ 观察系统接收到的返回值，发现为255。还在纳闷这个值从何而来，实在惭愧一时没想起来<strong>计算机采用补码形式存储数据</strong>，特此记录</p>
@@ -354,10 +354,6 @@ var _hmt = _hmt || [];
     
     <li class="nav-item">
       <a class="nav-item-link" href="https://github.com/T-L-T" target="_blank" rel="noopener">Github</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="https://me.csdn.net/weixin_43615204" target="_blank" rel="noopener">我的CSDN</a>
     </li>
     
     <li class="nav-item">

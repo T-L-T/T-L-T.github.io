@@ -3,7 +3,7 @@
   <entry>
     <title>编译安装MongoDB（含gcc环境）</title>
     <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/</url>
-    <content><![CDATA[<h2 id="编译安装MongoDB（含gcc环境）"><a href="#编译安装MongoDB（含gcc环境）" class="headerlink" title="编译安装MongoDB（含gcc环境）"></a>编译安装MongoDB（含gcc环境）</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+    <content><![CDATA[<h2 id="编译安装MongoDB（含gcc环境）"><a href="#编译安装MongoDB（含gcc环境）" class="headerlink" title="编译安装MongoDB（含gcc环境）"></a>编译安装MongoDB（含gcc环境）</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）</p>
 <p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
 <h3 id="二、依赖关系"><a href="#二、依赖关系" class="headerlink" title="二、依赖关系"></a>二、依赖关系</h3><h4 id="1-mongo-4-4-27"><a href="#1-mongo-4-4-27" class="headerlink" title="1. mongo 4.4.27"></a>1. mongo 4.4.27</h4><p>python 3.7.9   (如果系统默认的python版本是python2，但是又不想影响系统环境，可以使用 alias ‘python’&#x3D;’python3’，用别名的形式临时切换使用的python版本)</p>
 <p>scons 4.5.2</p>
@@ -56,7 +56,7 @@
   <entry>
     <title>编译安装erlang/rabbitmq</title>
     <url>/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85erlang-rabbitmq/</url>
-    <content><![CDATA[<h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang&#x2F;Rabbitmq"></a>编译安装Erlang&#x2F;Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）<a id="more"></a></p>
+    <content><![CDATA[<h2 id="编译安装Erlang-Rabbitmq"><a href="#编译安装Erlang-Rabbitmq" class="headerlink" title="编译安装Erlang&#x2F;Rabbitmq"></a>编译安装Erlang&#x2F;Rabbitmq</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）</p>
 <p>本文档基于特定版本，其他版本编译方法类似，需要注意版本依赖关系</p>
 <h3 id="二、编译安装Erlang"><a href="#二、编译安装Erlang" class="headerlink" title="二、编译安装Erlang"></a>二、编译安装Erlang</h3><p>erlang与rabbitmq之间存在版本依赖，具体查看<a href="https://www.rabbitmq.com/which-erlang.html#compatibility-matrix" target="_blank" rel="noopener">此处</a></p>
 <p>Erlang下载地址： <a href="https://www.erlang.org/downloads" target="_blank" rel="noopener">点此下载</a></p>
@@ -114,7 +114,7 @@
   <entry>
     <title>Ansible中setup模块与df命令在磁盘统计中的区别</title>
     <url>/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，<a id="more"></a>该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
+    <content><![CDATA[<h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
 <h3 id="二、df-命令底层原理"><a href="#二、df-命令底层原理" class="headerlink" title="二、df 命令底层原理"></a>二、df 命令底层原理</h3><p>df命令的底层调用过程依次如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev() -&gt; get_fs_usage() -&gt; statvfs_works() -&gt; statvfs()&#x2F;statfs()</span><br></pre></td></tr></table></figure>
 
@@ -154,15 +154,15 @@
         <category>Ansible</category>
       </categories>
       <tags>
-        <tag>Ansible</tag>
         <tag>linux</tag>
+        <tag>Ansible</tag>
         <tag>Devops</tag>
       </tags>
   </entry>
   <entry>
     <title>没有进程号的进程</title>
     <url>/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</url>
-    <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，<a id="more"></a>一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
+    <content><![CDATA[<h2 id="没有进程号的进程"><a href="#没有进程号的进程" class="headerlink" title="没有进程号的进程"></a>没有进程号的进程</h2><p>某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–<strong>这是个内核进程</strong>，但是小L同学菜啊，哪见过这种场面，一下子有些忐忑起来，以为是自己安全防护不到位，被某些不知名人物入侵了，为了寻求真相，也为了让自己心安，小L同学开始了漫漫探寻之路。</p>
 <p>小L同学巡检是查看自己服务器上的elasticsearch进程在不在，于是他是这样做的：</p>
 <p><img src="https://komo-blog.oss-cn-hangzhou.aliyuncs.com/Blog/2023/06/%E9%97%AE%E9%A2%98.png"></p>
 <p>小L同学惊悚的发现，第一行的20090端口，没有进程号。于是他下一步试图用ps命令寻找监听这个端口的进程：</p>
@@ -188,8 +188,8 @@
         <category>linux命令</category>
       </categories>
       <tags>
-        <tag>linux</tag>
         <tag>运维经验</tag>
+        <tag>linux</tag>
         <tag>linux命令</tag>
       </tags>
   </entry>
@@ -197,7 +197,7 @@
     <title>Jmeter基本使用与常见性能瓶颈</title>
     <url>/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h2 id="Jmeter基本使用与常见性能瓶颈"><a href="#Jmeter基本使用与常见性能瓶颈" class="headerlink" title="Jmeter基本使用与常见性能瓶颈"></a>Jmeter基本使用与常见性能瓶颈</h2><h3 id="一、什么是Jmeter"><a href="#一、什么是Jmeter" class="headerlink" title="一、什么是Jmeter"></a>一、什么是Jmeter</h3><p><a href="https://jmeter.apache.org/" target="_blank" rel="noopener">官网链接</a></p>
-<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/%E5%B0%8F%E6%9C%8D%E5%8A%A1%E7%A8%8B%E5%BA%8F/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，<a id="more"></a>在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能&#x2F;<a href="https://baike.baidu.com/item/%E5%9B%9E%E5%BD%92%E6%B5%8B%E8%AF%95/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/%E4%BD%BF%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
+<p>Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。<br>JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java <a href="https://baike.baidu.com/item/%E5%B0%8F%E6%9C%8D%E5%8A%A1%E7%A8%8B%E5%BA%8F/4148836" target="_blank" rel="noopener">小服务程序</a>、CGI 脚本、Java 对象、数据库和 <a href="https://baike.baidu.com/item/FTP/13839" target="_blank" rel="noopener">FTP</a> 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，在不同压力类别下测试它们的强度和分析整体性能。另外，JMeter 能够对应用程序做功能&#x2F;<a href="https://baike.baidu.com/item/%E5%9B%9E%E5%BD%92%E6%B5%8B%E8%AF%95/1925732" target="_blank" rel="noopener">回归测试</a>，通过创建带有断言的脚本来验证程序是否返回了期望结果。为了最大限度的灵活性，JMeter 允许<a href="https://baike.baidu.com/item/%E4%BD%BF%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/6555484" target="_blank" rel="noopener">使用正则表达式</a>创建断言。</p>
 <h3 id="二、Jmeter中的相关概念"><a href="#二、Jmeter中的相关概念" class="headerlink" title="二、Jmeter中的相关概念"></a>二、Jmeter中的相关概念</h3><ol>
 <li>线程：一个线程可以理解为一个虚拟用户。比如10个线程表示有10个用户不间断发起请求，也可以理解为<strong>并发数</strong></li>
 <li>线程组：测试的起点。一个测试计划必须包含至少一个线程组，其余所有组件都必须在线程组下</li>
@@ -297,7 +297,7 @@
 <li>bool</li>
 </ul>
 <h3 id="程序类型选择的原则"><a href="#程序类型选择的原则" class="headerlink" title="程序类型选择的原则"></a>程序类型选择的原则</h3><ul>
-<li>明确知晓数值不可能为负数时，选用无符号类型<a id="more"></a></li>
+<li>明确知晓数值不可能为负数时，选用无符号类型</li>
 <li>使用int执行整数运算（short太小，long跟int 一样；若整数超出int表示范围，选long long）</li>
 <li>在算术表达式中不要使用 char 或 bool，只有在存放字符或布尔值时才使用它们。因为类型 char在一些机器上是有符号的，而在另一些机器上又是无符号的， 所以如果使用 char 进行运算特别容易出问题。如果需要使用一个不大的整数， 那么明确指定它的类型是 Signed char 或者 uns igned char</li>
 <li>执行浮点数运算选用 double，这是因为 float 通常精度不够而且双精度浮点数和单精度浮点数的计算代价相差无几。事实上，对于某些机器来说，双精度运算甚至比单精度还快。long double 提供的精度在一般情况下是没有必要的， 沉且它带来的运行时消耗也不容忽视</li>
@@ -325,7 +325,7 @@
   <entry>
     <title>C++基础-main函数返回值问题</title>
     <url>/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：<a id="more"></a></p>
+    <content><![CDATA[<h2 id="C-基础-main函数返回值问题"><a href="#C-基础-main函数返回值问题" class="headerlink" title="C++基础-main函数返回值问题"></a>C++基础-main函数返回值问题</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"sssss"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>编译运行之后使用 ”echo $?“ 观察系统接收到的返回值，发现为255。还在纳闷这个值从何而来，实在惭愧一时没想起来<strong>计算机采用补码形式存储数据</strong>，特此记录</p>
@@ -364,7 +364,7 @@
   <entry>
     <title>服务器SSH被字典爆破时记录密码</title>
     <url>/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……<a id="more"></a>迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="/../../../../../../image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
+    <content><![CDATA[<h2 id="服务器SSH被字典爆破时记录对方使用的密码"><a href="#服务器SSH被字典爆破时记录对方使用的密码" class="headerlink" title="服务器SSH被字典爆破时记录对方使用的密码"></a>服务器SSH被字典爆破时记录对方使用的密码</h2><p>事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……迄今为止对方可是已经尝试了四十多万次了啊！！！！于是动手开始部署，准备记录。<br><img src="/../../../../../../image/2020/11/10/fail2ban.png" alt="执着的爆破者"></p>
 <p>在网上找到了两种方法：一种是通过patch，也就是打补丁的方式。因为默认的ssh日志是不带密码记录功能的，于是可以重新编译openssh并打上补丁，使它能够记录，但尝试之后这种方法并没有成功，因为在打补丁的过程中报如下错误：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">patch --dry-run &lt; syslog.patch</span><br><span class="line">checking file auth-passwd.c </span><br><span class="line">patch: **** malformed patch at line 4: &#123;</span><br></pre></td></tr></table></figure>
 
@@ -428,10 +428,10 @@
     <title>About</title>
     <url>/2020/07/24/About/</url>
     <content><![CDATA[<h2 id="About"><a href="#About" class="headerlink" title="About"></a>About</h2><p>  ——初来乍到，请多关照（^_^）—–</p>
-<p>21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。<a id="more"></a>备考期间不定时更新（其实是不想复习了就更新hahahhahaha），内容随缘。可能是技术类文章，也可能是读后感、感悟之类的。备考期间会着重复习数据结构、算法、C++，刷力扣之类的，所以未来一段时间可能算法类多一点。另外，会抽空看一点系统介绍Linux的电子书（虽然Linux是我目前的主系统，但不得不说，我对它缺乏系统性的了解，很难深入….）。考试之后有想法入坑CTF（其实是想入坑很久了，苦于….），到时候也会更新自己的学习感悟。</p>
+<p>21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。备考期间不定时更新（其实是不想复习了就更新hahahhahaha），内容随缘。可能是技术类文章，也可能是读后感、感悟之类的。备考期间会着重复习数据结构、算法、C++，刷力扣之类的，所以未来一段时间可能算法类多一点。另外，会抽空看一点系统介绍Linux的电子书（虽然Linux是我目前的主系统，但不得不说，我对它缺乏系统性的了解，很难深入….）。考试之后有想法入坑CTF（其实是想入坑很久了，苦于….），到时候也会更新自己的学习感悟。</p>
 <p>如果有大神发现我的博客有误，可以通过以下方式联系我改正，万分感激：</p>
 <ul>
-<li>email:<a href="mailto:&#x6b;&#x6f;&#x6d;&#x6f;&#114;&#x65;&#x62;&#105;&#108;&#122;&#x68;&#64;&#103;&#x6d;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;">komorebilzh@gmail.com</a></li>
+<li>email:<a href="mailto:&#x6b;&#111;&#109;&#x6f;&#x72;&#101;&#x62;&#x69;&#x6c;&#122;&#x68;&#x40;&#x67;&#109;&#x61;&#x69;&#x6c;&#x2e;&#99;&#111;&#x6d;">komorebilzh@gmail.com</a></li>
 <li>QQ:3360207672</li>
 <li>twitter:<a href="https://twitter.com/messages" target="_blank" rel="noopener">→_→</a></li>
 </ul>

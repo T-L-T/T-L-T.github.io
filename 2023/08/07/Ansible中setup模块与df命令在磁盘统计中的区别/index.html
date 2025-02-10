@@ -149,7 +149,7 @@ var _hmt = _hmt || [];
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，<a id="more"></a>该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
+  <h2 id="Ansible中setup模块与df命令在磁盘统计中的区别"><a href="#Ansible中setup模块与df命令在磁盘统计中的区别" class="headerlink" title="Ansible中setup模块与df命令在磁盘统计中的区别"></a>Ansible中setup模块与df命令在磁盘统计中的区别</h2><h3 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h3><p>在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 <strong>df -h</strong> 命令查询到的结果（最终证误，该误差是由于没有考虑到各磁盘的inode等元数据占用的空间大小导致）。经过查看<a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/gather_facts_module.html#id1" target="_blank" rel="noopener">Ansible官方文档</a>发现该模块默认是使用Ansible中的setup模块完成。</p>
 <h3 id="二、df-命令底层原理"><a href="#二、df-命令底层原理" class="headerlink" title="二、df 命令底层原理"></a>二、df 命令底层原理</h3><p>df命令的底层调用过程依次如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">main() -&gt; get_entry()&#x2F;get_all_entries() -&gt; get_point() -&gt; get_dev() -&gt; get_fs_usage() -&gt; statvfs_works() -&gt; statvfs()&#x2F;statfs()</span><br></pre></td></tr></table></figure>
 
@@ -363,10 +363,6 @@ var _hmt = _hmt || [];
     
     <li class="nav-item">
       <a class="nav-item-link" href="https://github.com/T-L-T" target="_blank" rel="noopener">Github</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="https://me.csdn.net/weixin_43615204" target="_blank" rel="noopener">我的CSDN</a>
     </li>
     
     <li class="nav-item">

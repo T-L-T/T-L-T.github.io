@@ -6,7 +6,7 @@
   <link href="http://t-l-t.github.io/atom.xml" rel="self"/>
   
   <link href="http://t-l-t.github.io/"/>
-  <updated>2024-01-23T09:29:58.128Z</updated>
+  <updated>2025-02-10T11:58:30.559Z</updated>
   <id>http://t-l-t.github.io/</id>
   
   <author>
@@ -21,10 +21,16 @@
     <link href="http://t-l-t.github.io/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/"/>
     <id>http://t-l-t.github.io/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85MongoDB%EF%BC%88%E5%90%ABgcc%E7%8E%AF%E5%A2%83%EF%BC%89/</id>
     <published>2023-08-18T06:41:00.000Z</published>
-    <updated>2024-01-23T09:29:58.128Z</updated>
+    <updated>2025-02-10T11:58:30.559Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;编译安装MongoDB（含gcc环境）&quot;&gt;&lt;a href=&quot;#编译安装MongoDB（含gcc环境）&quot; class=&quot;headerlink&quot; title=&quot;编译安装MongoDB（含gcc环境）&quot;&gt;&lt;/a&gt;编译安装MongoDB（含gcc环境）&lt;/h2&gt;&lt;h3 id=&quot;一、背景&quot;&gt;&lt;a href=&quot;#一、背景&quot; class=&quot;headerlink&quot; title=&quot;一、背景&quot;&gt;&lt;/a&gt;一、背景&lt;/h3&gt;&lt;p&gt;工作原因需要使用arm架构下的mongo4.x，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;编译安装MongoDB（含gcc环境）&quot;&gt;&lt;a href=&quot;#编译安装MongoDB（含gcc环境）&quot; class=&quot;headerlink&quot; title=&quot;编译安装MongoDB（含gcc环境）&quot;&gt;&lt;/a&gt;编译安装MongoDB（含gcc环境）&lt;/h2&gt;&lt;h3</summary>
+        
+      
     
     
     
@@ -42,10 +48,16 @@
     <link href="http://t-l-t.github.io/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85erlang-rabbitmq/"/>
     <id>http://t-l-t.github.io/2023/08/18/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85erlang-rabbitmq/</id>
     <published>2023-08-18T02:41:16.000Z</published>
-    <updated>2024-06-21T02:56:53.601Z</updated>
+    <updated>2025-02-10T11:57:06.895Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;编译安装Erlang-Rabbitmq&quot;&gt;&lt;a href=&quot;#编译安装Erlang-Rabbitmq&quot; class=&quot;headerlink&quot; title=&quot;编译安装Erlang&amp;#x2F;Rabbitmq&quot;&gt;&lt;/a&gt;编译安装Erlang&amp;#x2F;Rabbitmq&lt;/h2&gt;&lt;h3 id=&quot;一、背景&quot;&gt;&lt;a href=&quot;#一、背景&quot; class=&quot;headerlink&quot; title=&quot;一、背景&quot;&gt;&lt;/a&gt;一、背景&lt;/h3&gt;&lt;p&gt;工作原因需要使用arm架构下的rabbitmq，官网没有二进制包，故无奈自己编译（不到万不得已不建议编译）</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;编译安装Erlang-Rabbitmq&quot;&gt;&lt;a href=&quot;#编译安装Erlang-Rabbitmq&quot; class=&quot;headerlink&quot;</summary>
+        
+      
     
     
     
@@ -63,19 +75,25 @@
     <link href="http://t-l-t.github.io/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
     <id>http://t-l-t.github.io/2023/08/07/Ansible%E4%B8%ADsetup%E6%A8%A1%E5%9D%97%E4%B8%8Edf%E5%91%BD%E4%BB%A4%E5%9C%A8%E7%A3%81%E7%9B%98%E7%BB%9F%E8%AE%A1%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB/</id>
     <published>2023-08-07T01:48:35.000Z</published>
-    <updated>2023-08-07T09:46:17.566Z</updated>
+    <updated>2025-02-10T11:58:30.544Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;Ansible中setup模块与df命令在磁盘统计中的区别&quot;&gt;&lt;a href=&quot;#Ansible中setup模块与df命令在磁盘统计中的区别&quot; class=&quot;headerlink&quot; title=&quot;Ansible中setup模块与df命令在磁盘统计中的区别&quot;&gt;&lt;/a&gt;Ansible中setup模块与df命令在磁盘统计中的区别&lt;/h2&gt;&lt;h3 id=&quot;一、背景&quot;&gt;&lt;a href=&quot;#一、背景&quot; class=&quot;headerlink&quot; title=&quot;一、背景&quot;&gt;&lt;/a&gt;一、背景&lt;/h3&gt;&lt;p&gt;在编写用ansible巡检服务器基本信息的脚本过程中使用了ansible的gather_facts收集目标主机信息，但是经过计算发现各挂载点的存储空间使用率远大于在服务器上使用 &lt;strong&gt;df -h&lt;/strong&gt; 命令查询到的结果（最终证误，</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;Ansible中setup模块与df命令在磁盘统计中的区别&quot;&gt;&lt;a href=&quot;#Ansible中setup模块与df命令在磁盘统计中的区别&quot; class=&quot;headerlink&quot;</summary>
+        
+      
     
     
     
     <category term="Ansible" scheme="http://t-l-t.github.io/categories/Ansible/"/>
     
     
-    <category term="Ansible" scheme="http://t-l-t.github.io/tags/Ansible/"/>
-    
     <category term="linux" scheme="http://t-l-t.github.io/tags/linux/"/>
+    
+    <category term="Ansible" scheme="http://t-l-t.github.io/tags/Ansible/"/>
     
     <category term="Devops" scheme="http://t-l-t.github.io/tags/Devops/"/>
     
@@ -86,10 +104,16 @@
     <link href="http://t-l-t.github.io/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/"/>
     <id>http://t-l-t.github.io/2023/06/15/%E6%B2%A1%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B/</id>
     <published>2023-06-15T08:09:51.000Z</published>
-    <updated>2023-06-16T13:30:18.964Z</updated>
+    <updated>2025-02-10T11:58:30.544Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;没有进程号的进程&quot;&gt;&lt;a href=&quot;#没有进程号的进程&quot; class=&quot;headerlink&quot; title=&quot;没有进程号的进程&quot;&gt;&lt;/a&gt;没有进程号的进程&lt;/h2&gt;&lt;p&gt;某天，苦逼的linux运维小L同学日常巡检线上生产环境过程中发现一个神奇的现象，有一个进程没有名字，也没有进程号。有经验的老鸟很容易联想到真相–&lt;strong&gt;这是个内核进程&lt;/strong&gt;，但是小L同学菜啊，哪见过这种场面，</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;没有进程号的进程&quot;&gt;&lt;a href=&quot;#没有进程号的进程&quot; class=&quot;headerlink&quot;</summary>
+        
+      
     
     
     
@@ -98,9 +122,9 @@
     <category term="linux命令" scheme="http://t-l-t.github.io/categories/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/linux%E5%91%BD%E4%BB%A4/"/>
     
     
-    <category term="linux" scheme="http://t-l-t.github.io/tags/linux/"/>
-    
     <category term="运维经验" scheme="http://t-l-t.github.io/tags/%E8%BF%90%E7%BB%B4%E7%BB%8F%E9%AA%8C/"/>
+    
+    <category term="linux" scheme="http://t-l-t.github.io/tags/linux/"/>
     
     <category term="linux命令" scheme="http://t-l-t.github.io/tags/linux%E5%91%BD%E4%BB%A4/"/>
     
@@ -111,11 +135,16 @@
     <link href="http://t-l-t.github.io/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"/>
     <id>http://t-l-t.github.io/2022/10/23/jmeter%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</id>
     <published>2022-10-23T09:36:00.000Z</published>
-    <updated>2022-10-23T11:20:51.472Z</updated>
+    <updated>2025-02-10T11:58:30.544Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;Jmeter基本使用与常见性能瓶颈&quot;&gt;&lt;a href=&quot;#Jmeter基本使用与常见性能瓶颈&quot; class=&quot;headerlink&quot; title=&quot;Jmeter基本使用与常见性能瓶颈&quot;&gt;&lt;/a&gt;Jmeter基本使用与常见性能瓶颈&lt;/h2&gt;&lt;h3 id=&quot;一、什么是Jmeter&quot;&gt;&lt;a href=&quot;#一、什么是Jmeter&quot; class=&quot;headerlink&quot; title=&quot;一、什么是Jmeter&quot;&gt;&lt;/a&gt;一、什么是Jmeter&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;https://jmeter.apache.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;官网链接&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Apache JMeter 是 Apache 组织基于 Java 开发的压力测试工具，用于对软件做压力测试。&lt;br&gt;JMeter 最初被设计用于 Web 应用测试，但后来扩展到了其他测试领域，可用于测试静态和动态资源，如静态文件、Java &lt;a href=&quot;https://baike.baidu.com/item/%E5%B0%8F%E6%9C%8D%E5%8A%A1%E7%A8%8B%E5%BA%8F/4148836&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;小服务程序&lt;/a&gt;、CGI 脚本、Java 对象、数据库和 &lt;a href=&quot;https://baike.baidu.com/item/FTP/13839&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;FTP&lt;/a&gt; 服务器等等。JMeter 可对服务器、网络或对象模拟巨大的负载，</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;Jmeter基本使用与常见性能瓶颈&quot;&gt;&lt;a href=&quot;#Jmeter基本使用与常见性能瓶颈&quot; class=&quot;headerlink&quot; title=&quot;Jmeter基本使用与常见性能瓶颈&quot;&gt;&lt;/a&gt;Jmeter基本使用与常见性能瓶颈&lt;/h2&gt;&lt;h3</summary>
+        
+      
     
     
     
@@ -135,23 +164,20 @@
     <link href="http://t-l-t.github.io/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"/>
     <id>http://t-l-t.github.io/2022/10/17/%E7%A8%8B%E5%BA%8F%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</id>
     <published>2022-10-17T00:33:43.000Z</published>
-    <updated>2022-10-23T10:58:55.029Z</updated>
+    <updated>2025-02-10T11:58:30.554Z</updated>
     
     
+      
+      
+        
+        
     <summary type="html">&lt;h3 id=&quot;基本内置类型&quot;&gt;&lt;a href=&quot;#基本内置类型&quot; class=&quot;headerlink&quot; title=&quot;基本内置类型&quot;&gt;&lt;/a&gt;基本内置类型&lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;short&lt;/li&gt;
 &lt;li&gt;int&lt;/li&gt;
 &lt;li&gt;long&lt;/li&gt;
-&lt;li&gt;long long （short &amp;lt;&amp;#x3D; int &amp;lt;&amp;#x3D; long &amp;lt;&amp;#x3D; long long）&lt;/li&gt;
-&lt;li&gt;float&lt;/li&gt;
-&lt;li&gt;double&lt;/li&gt;
-&lt;li&gt;long double&lt;/li&gt;
-&lt;li&gt;char：一个char类型的大小跟一个机器字节一样（与机器有关）&lt;/li&gt;
-&lt;li&gt;unsigned （各种无符号数 &amp;gt;&amp;#x3D; 0，循环条件需注意）&lt;/li&gt;
-&lt;li&gt;bool&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&quot;程序类型选择的原则&quot;&gt;&lt;a href=&quot;#程序类型选择的原则&quot; class=&quot;headerlink&quot; title=&quot;程序类型选择的原则&quot;&gt;&lt;/a&gt;程序类型选择的原则&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;明确知晓数值不可能为负数时，选用无符号类型</summary>
+&lt;li&gt;long</summary>
+        
+      
     
     
     
@@ -167,10 +193,16 @@
     <link href="http://t-l-t.github.io/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/"/>
     <id>http://t-l-t.github.io/2022/04/19/main%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E9%97%AE%E9%A2%98/</id>
     <published>2022-04-19T14:36:00.000Z</published>
-    <updated>2022-10-23T11:03:01.703Z</updated>
+    <updated>2025-02-10T11:58:30.544Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;C-基础-main函数返回值问题&quot;&gt;&lt;a href=&quot;#C-基础-main函数返回值问题&quot; class=&quot;headerlink&quot; title=&quot;C++基础-main函数返回值问题&quot;&gt;&lt;/a&gt;C++基础-main函数返回值问题&lt;/h2&gt;&lt;h3 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h3&gt;&lt;p&gt;在从头学习C++  ”圣经“ —-《C++ Primer》时看到一个思考题 ”返回值 -1 通常作为程序错误的标识，当程序的 main 函数返回值为 -1 时，观察系统如何处理返回的错误标识“，编写程序验证：</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;C-基础-main函数返回值问题&quot;&gt;&lt;a href=&quot;#C-基础-main函数返回值问题&quot; class=&quot;headerlink&quot; title=&quot;C++基础-main函数返回值问题&quot;&gt;&lt;/a&gt;C++基础-main函数返回值问题&lt;/h2&gt;&lt;h3 id=&quot;背景&quot;&gt;&lt;a</summary>
+        
+      
     
     
     
@@ -190,10 +222,16 @@
     <link href="http://t-l-t.github.io/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/"/>
     <id>http://t-l-t.github.io/2020/11/10/%E6%9C%8D%E5%8A%A1%E5%99%A8SSH%E8%A2%AB%E5%AD%97%E5%85%B8%E7%88%86%E7%A0%B4%E6%97%B6%E8%AE%B0%E5%BD%95%E5%AF%86%E7%A0%81/</id>
     <published>2020-11-10T11:29:44.000Z</published>
-    <updated>2022-10-23T10:59:06.653Z</updated>
+    <updated>2025-02-10T11:58:30.564Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;服务器SSH被字典爆破时记录对方使用的密码&quot;&gt;&lt;a href=&quot;#服务器SSH被字典爆破时记录对方使用的密码&quot; class=&quot;headerlink&quot; title=&quot;服务器SSH被字典爆破时记录对方使用的密码&quot;&gt;&lt;/a&gt;服务器SSH被字典爆破时记录对方使用的密码&lt;/h2&gt;&lt;p&gt;事情的起因是这样的：本人购（bai）买（piao）了一台华为云的云主机，有一天登录的时候日常查看安全日志，发现有人在用字典爆破我ssh登录的用户名和密码，奈何我早就做了安全加固（更改ssh端口、禁止root用户登录、使用fail2ban）对方并没有成功。由于我端口选的过于随机，用户名足够偏，密码强度足够，便放任他爆破。过了一个月发现还在继续，感叹对方执着的同时突然想到：这不正是一个构建自己密码字典的好机会吗？瞬间感觉自己错过了一个亿……</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;服务器SSH被字典爆破时记录对方使用的密码&quot;&gt;&lt;a href=&quot;#服务器SSH被字典爆破时记录对方使用的密码&quot; class=&quot;headerlink&quot;</summary>
+        
+      
     
     
     
@@ -215,11 +253,16 @@
     <link href="http://t-l-t.github.io/2020/07/24/About/"/>
     <id>http://t-l-t.github.io/2020/07/24/About/</id>
     <published>2020-07-24T15:04:32.000Z</published>
-    <updated>2022-10-23T10:59:15.042Z</updated>
+    <updated>2025-02-10T11:58:30.544Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;About&quot;&gt;&lt;a href=&quot;#About&quot; class=&quot;headerlink&quot; title=&quot;About&quot;&gt;&lt;/a&gt;About&lt;/h2&gt;&lt;p&gt;  ——初来乍到，请多关照（^_^）—–&lt;/p&gt;
-&lt;p&gt;21考研狗一枚，想通过写博客的方式将所学的东西复述出来，加深理解。同时，被各路大神博客拯救过无数次的我深知一篇浅显易懂博客的重要性，所以我自己也想从一个索取者变成一个分享者，希望能帮到大家。</summary>
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;About&quot;&gt;&lt;a href=&quot;#About&quot; class=&quot;headerlink&quot; title=&quot;About&quot;&gt;&lt;/a&gt;About&lt;/h2&gt;&lt;p&gt; </summary>
+        
+      
     
     
     
